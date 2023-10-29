@@ -83,7 +83,7 @@ pokemon <- read.csv("data/pokemon.csv")
 
 ## Analysis approach
 
-The response variable is base_total, which is the total of all base stats (attack, special attack, defense, special defense, speed, and hitpoints) for a given pokémon. It is a generally great measure of a pokémon's strength.
+The response variable is **base_total**, which is the total of all base stats (attack, special attack, defense, special defense, speed, and hitpoints) for a given pokémon. It is a generally great measure of a pokémon's strength.
 
 The potential predictor variables include:
 
