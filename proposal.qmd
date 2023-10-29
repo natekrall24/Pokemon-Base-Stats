@@ -33,7 +33,7 @@ We retrieved the dataset from kaggle.com, a large data science online community,
 
 -   percentage_male: The percentage of the species that are male. Blank if the Pokemon is genderless.
 
--   type1: The Primary Type of the Pokemon (every pokémon have this)
+-   type1: The Primary Type of the Pokemon (every pokémon has this)
 
 -   type2: The Secondary Type of the Pokemon (not all pokémon have this)
 
