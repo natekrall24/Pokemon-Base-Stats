@@ -112,7 +112,7 @@ tidy(summary(pokemon$weight_kg))
 
 Description:
 
-The distribution of the weights of the pokemons show a heavily right skewed distribution. The mean is around 61.38 while the median is only at around 27.3 which suggests the extremely heavy Pokemons are bringing the mean weight up a very significant amount whch leads to the mean being much higher than the median. The range of the weights of Pokemons show that the lightest one is around .1 kg while the heaviest is around 999.9 kg. Since there is a heavy right skew the median will be a better predictor for the average Pokemon weight so we can say the median weight of the Pokemons is around 27.3kg
+The distribution of the weights of the pokemons show a heavily right skewed distribution. The mean is around 61.38 while the median is only at around 27.3 which suggests the extremely heavy Pokemon are bringing the mean weight up a very significant amount whch leads to the mean being much higher than the median. The range of the weights of Pokemon show that the lightest one is around .1 kg while the heaviest is around 999.9 kg. Since there is a heavy right skew the median will be a better predictor for the average Pokemon weight so we can say the median weight of the Pokemon is around 27.3kg
 
 -   **Generation(qualitative predictor):**
 
@@ -131,7 +131,7 @@ ggplot(generation_means, aes(x = as.factor(generation), y = mean_base_total)) +
 
 Description:
 
-This is the graph showing the relationship between different generation Pokemons and their mean base total. We can see from this graph that the mean base total of generation 4 Pokemon were the highest but overall we can't see any distinct relationships between the generation of the Pokemon and their mean base total. One can maybe say there could be a very slight positive linear relationship between the generation of the Pokemon and their mean base total as we obsere that as generation increases the mean base total tends to increase slightly.
+This is the graph showing the relationship between different generation Pokemon and their mean base total. We can see from this graph that the mean base total of generation 4 Pokemon were the highest but overall we can't see any distinct relationships between the generation of the Pokemon and their mean base total. One can maybe say there could be a very slight positive linear relationship between the generation of the Pokemon and their mean base total as we obsere that as generation increases the mean base total tends to increase slightly.
 
 **Relationships between response and predictor from above:**
 
@@ -160,7 +160,7 @@ From the scatterplot I can see that there is no apparent correlation between the
 
 Description:
 
-From the graph I can see that for each generation of Pokemon there seems to be a few Pokemons that have a base total that is comparably higher than the others but most of the Pokemons seems to be around 400 base total points for all generations and we can see that generation 1 had the highest base total Pokemon out of the 7 generations of Pokemons. We can also see that from the top base total Pokemons in each generation, generation 7 had the lowest rated one.
+From the graph I can see that for each generation of Pokemon there seems to be a few Pokemon that have a base total that is comparably higher than the others but most of the Pokemon seems to be around 400 base total points for all generations and we can see that generation 1 had the highest base total Pokemon out of the 7 generations of Pokemon. We can also see that from the top base total Pokemon in each generation, generation 7 had the lowest rated one.
 
 Potential Interaction Effect (Base total and is legendary):
 
@@ -176,7 +176,7 @@ levels(pokemon$is_legendary)
 
 Description:
 
-This graph is showing the relationship between the weight of the Pokemon and the base total for legendary and non legendary Pokemons. The red line is for non legendary Pokemons (is_legendary = 0) and the blue line is for legendary Pokemons (is_legendary = 1). Something interesting we can note is that legendary Pokemons all tend to have a much higher and consistent base total for all weights. Across all weights most base total for legendary Pokemons stay between 550- 700. Among the legendary Pokemons there doesn't seem to be any correlation between the weight and the base total. Among the non-legendary Pokemons however, there seems to be a very slight positive correlation between the weight of the Pokemon and the base total. As the weight of the non-legendary Pokemon goes up, the Base total seems to go up slightly although with the cluster of points under 100 kg Pokemons, it is hard to conclude, and regardless, the correlation does not appear to be strong between these variables.
+This graph is showing the relationship between the weight of the Pokemon and the base total for legendary and non legendary Pokemon. The red line is for non legendary Pokemons (is_legendary = 0) and the blue line is for legendary Pokemon (is_legendary = 1). Something interesting we can note is that legendary Pokemon all tend to have a much higher and consistent base total for all weights. Across all weights most base total for legendary Pokemons stay between 550- 700. Among the legendary Pokemon there doesn't seem to be any correlation between the weight and the base total. Among the non-legendary Pokemon however, there seems to be a very slight positive correlation between the weight of the Pokemon and the base total. As the weight of the non-legendary Pokemon goes up, the Base total seems to go up slightly although with the cluster of points under 100 kg Pokemon, it is hard to conclude, and regardless, the correlation does not appear to be strong between these variables.
 
 Note that from this graph we can tell that Legendary pokemon appear to tend to have much higher base stat totals than non-legendary pokemon on average, which is something that will definitely impact our multiple linear regression model.
 
