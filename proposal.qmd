@@ -90,7 +90,9 @@ ggplot(pokemon, aes(x = base_total)) +
 summary(pokemon$base_total)
 ```
 
-ADD DESC HERE BRIAN
+Description:
+
+We can see from the distribution of the base total, that is seems to be roughly trimodal with three peaks (one around 300, 400, and 475). The base total points vary from about 180 to 780 with a mean at around 428.4. The median is 435 which is higher than the mean by a little bit which could mean that there are more extreme low base total Pokemon bringing the mean down a little bit. The IQR is 185 (505 - 320) and looking at the data there might be a potential outlier around 780 base total.
 
 **Distributions of one potential quantitative predictor variable and one potential categorical predictor variable:**
 
@@ -104,7 +106,9 @@ ggplot(pokemon, aes(x = weight_kg)) +
 summary(pokemon$weight_kg)
 ```
 
-ADD DESC HERE BRIAN
+Description:
+
+The distribution of the weights of the pokemons show a heavily right skewed distribution. The mean is around 61.38 while the median is only at around 27.3 which suggests the extremely heavy Pokemons are bringing the mean weight up a very significant amount whch leads to the mean being much higher than the median. The range of the weights of Pokemons show that the lightest one is around .1 kg while the heaviest is around 999.9 kg. Since there is a heavy right skew the median will be a better predictor for the average Pokemon weight so we can say the median weight of the Pokemons is around 27.3kg
 
 -   **Generation(qualitative predictor):**
 
@@ -121,7 +125,9 @@ ggplot(generation_means, aes(x = as.factor(generation), y = mean_base_total)) +
        y = "Mean Base Total")
 ```
 
-ADD DESC HERE BRIAN + FIX SPACING IF POSSIBLE
+Description:
+
+This is the graph showing the relationship between different generation Pokemons and their mean base total. We can see from this graph that the mean base total of generation Pokemon's were the highest but overall we can't see any distinct relationships between the generation of the Pokemon and their mean base total. One can maybe say there is a very slight positive linear relationship between the the generation of the Pokemon and their mean base total as we can see as generation increases the mean base total tends to increase for the most part.
 
 **Relationships between response and predictor from above:**
 
@@ -132,7 +138,10 @@ ggplot(pokemon, aes(x = weight_kg, y = base_total)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE, col = "blue") +
   labs(title = "Scatter Plot of Base Total vs. Weight", x = "Weight (kg)", y = "Base Total")
+
 ```
+
+Description:
 
 ADD DESC HERE AND MAYBE COR?
 
