@@ -138,12 +138,11 @@ ggplot(pokemon, aes(x = weight_kg, y = base_total)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE, col = "blue") +
   labs(title = "Scatter Plot of Base Total vs. Weight", x = "Weight (kg)", y = "Base Total")
-
 ```
 
 Description:
 
-ADD DESC HERE AND MAYBE COR?
+From the scatterplot I can see that there is no apparent correlation between the weight and the base total. There may be a very low positive correlation between these two variables but most of the points are focused around when the weight of the Pokemon is less than 100kg so it's hard to tell the relationship. There seems to be a few outliers near 900-1000kg.
 
 -   **Base Total and Generation:**
 
@@ -155,7 +154,9 @@ ADD DESC HERE AND MAYBE COR?
            y = "Base Total")
     ```
 
-ADD DESC HERE AND MAYBE COR?
+Description:
+
+From the graph I can see that for each generation of Pokemon there seems to be a few Pokemons that have a base total that is comparably higher than the others but most of the Pokemons seems to be around 400 base total points for all generations and we can see that generation 1 had the highest base total Pokemon out of the 7 generations of Pokemons. We can also see that from the top base total Pokemons in each generation, generation 7 had the lowest rated one.
 
 Potential Interaction Effect (Base total and is legendary):
 
@@ -165,9 +166,13 @@ ggplot(pokemon, aes(x = weight_kg, y = base_total, color = is_legendary)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(title = "Interaction Between Weight and Legendary Status", x = "Weight (kg)", y = "Base Total")
+
+levels(pokemon$is_legendary)
 ```
 
-ADD DESC HERE AND MENTION THE AS FACTOR PART OF CODE
+Description:
+
+This graph is showing the relationship between the weight of the Pokemon and the base total for legendary and non legendary Pokemons. The red line is for non legendary Pokemons (is_legendary = 0) and the blue line is for legendary Pokemons (is_legendary = 1). Something interesting we can note is that legendary Pokemons all tend to have a much higher and consistent base total for all weights. Across all weights most base total for legendary Pokemons stay between 550- 700. Among the legendary Pokemons there doesn't seem to be any correlation between the weight and the base total. Among the non-legendary Pokemons however, there seems to be a very slight positive correlation between the weight of the Pokemon and the base total. As the weight of the non-legendary Pokemon goes up, the Base total seems to go up slightly although with the cluster of points under 100 kg Pokemons, it is hard to conclude.
 
 ## Analysis approach
 
