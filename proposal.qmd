@@ -79,7 +79,7 @@ As you'll notice, the dataset splits the base stats of each pokemon into the ind
 
 ## Initial exploratory data analysis
 
-**Distribution of the response variable:**
+**Distribution of the response variable (base total):**
 
 ```{r}
 ggplot(pokemon, aes(x = base_total)) +
@@ -106,12 +106,19 @@ summary(pokemon$weight_kg)
 
 ADD DESC HERE BRIAN
 
--   **Primary types(type 1) (qualitative predictor):**
+-   **Generation(qualitative predictor):**
 
 ```{r}
-ggplot(pokemon, aes(x = type1)) +
-  geom_bar(color = "black") +
-  labs(title = "Distribution of Pokemon Primary Types", y = "Frequency", x = "Type 1")
+generation_means <- pokemon |>
+  group_by(generation) |>
+  summarise(mean_base_total = mean(base_total)) |>
+  arrange(desc(mean_base_total))
+
+ggplot(generation_means, aes(x = as.factor(generation), y = mean_base_total)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  labs(title = "Mean Base Total Across Generations",
+       x = "Generation",
+       y = "Mean Base Total")
 ```
 
 ADD DESC HERE BRIAN + FIX SPACING IF POSSIBLE
@@ -129,9 +136,17 @@ ggplot(pokemon, aes(x = weight_kg, y = base_total)) +
 
 ADD DESC HERE AND MAYBE COR?
 
--   **Base Total and Primary Type (Type 1):**
+-   **Base Total and Generation:**
 
--not sure how to do
+    ```{r}
+    ggplot(pokemon, aes(x = as.factor(generation), y = base_total)) +
+      geom_point() +
+      labs(title = "Base Total Across Generations",
+           x = "Generation",
+           y = "Base Total")
+    ```
+
+ADD DESC HERE AND MAYBE COR?
 
 Potential Interaction Effect (Base total and is legendary):
 
