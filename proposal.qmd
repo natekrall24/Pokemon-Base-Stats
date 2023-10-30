@@ -86,8 +86,10 @@ ggplot(pokemon, aes(x = base_total)) +
   geom_histogram(binwidth = 10, fill = "blue", color = "black") +
   geom_vline(xintercept = mean(pokemon$base_total), color = "red", size = 1) +
   labs(title = "Distribution of Base Total", x = "Base Total")
+```
 
-summary(pokemon$base_total)
+```{r}
+tidy(summary(pokemon$base_total))
 ```
 
 Description:
@@ -102,8 +104,10 @@ We can see from the distribution of the base total, that is seems to be roughly 
 ggplot(pokemon, aes(x = weight_kg)) +
   geom_histogram(binwidth = 10, fill = "green", color = "black") +
   labs(title = "Distribution of Pokemon Weight", x = "Weight (kg)")
+```
 
-summary(pokemon$weight_kg)
+```{r}
+tidy(summary(pokemon$weight_kg))
 ```
 
 Description:
@@ -127,7 +131,7 @@ ggplot(generation_means, aes(x = as.factor(generation), y = mean_base_total)) +
 
 Description:
 
-This is the graph showing the relationship between different generation Pokemons and their mean base total. We can see from this graph that the mean base total of generation Pokemon's were the highest but overall we can't see any distinct relationships between the generation of the Pokemon and their mean base total. One can maybe say there is a very slight positive linear relationship between the the generation of the Pokemon and their mean base total as we can see as generation increases the mean base total tends to increase for the most part.
+This is the graph showing the relationship between different generation Pokemons and their mean base total. We can see from this graph that the mean base total of generation 4 Pokemon were the highest but overall we can't see any distinct relationships between the generation of the Pokemon and their mean base total. One can maybe say there could be a very slight positive linear relationship between the generation of the Pokemon and their mean base total as we obsere that as generation increases the mean base total tends to increase slightly.
 
 **Relationships between response and predictor from above:**
 
@@ -172,7 +176,9 @@ levels(pokemon$is_legendary)
 
 Description:
 
-This graph is showing the relationship between the weight of the Pokemon and the base total for legendary and non legendary Pokemons. The red line is for non legendary Pokemons (is_legendary = 0) and the blue line is for legendary Pokemons (is_legendary = 1). Something interesting we can note is that legendary Pokemons all tend to have a much higher and consistent base total for all weights. Across all weights most base total for legendary Pokemons stay between 550- 700. Among the legendary Pokemons there doesn't seem to be any correlation between the weight and the base total. Among the non-legendary Pokemons however, there seems to be a very slight positive correlation between the weight of the Pokemon and the base total. As the weight of the non-legendary Pokemon goes up, the Base total seems to go up slightly although with the cluster of points under 100 kg Pokemons, it is hard to conclude.
+This graph is showing the relationship between the weight of the Pokemon and the base total for legendary and non legendary Pokemons. The red line is for non legendary Pokemons (is_legendary = 0) and the blue line is for legendary Pokemons (is_legendary = 1). Something interesting we can note is that legendary Pokemons all tend to have a much higher and consistent base total for all weights. Across all weights most base total for legendary Pokemons stay between 550- 700. Among the legendary Pokemons there doesn't seem to be any correlation between the weight and the base total. Among the non-legendary Pokemons however, there seems to be a very slight positive correlation between the weight of the Pokemon and the base total. As the weight of the non-legendary Pokemon goes up, the Base total seems to go up slightly although with the cluster of points under 100 kg Pokemons, it is hard to conclude, and regardless, the correlation does not appear to be strong between these variables.
+
+Note that from this graph we can tell that Legendary pokemon appear to tend to have much higher base stat totals than non-legendary pokemon on average, which is something that will definitely impact our multiple linear regression model.
 
 ## Analysis approach
 
