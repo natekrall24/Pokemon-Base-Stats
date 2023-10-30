@@ -1,6 +1,6 @@
 ---
 title: "Project Proposal"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "STA210: Brian Daniel and Nate - Daniel Cohen, Nate Krall, Brian Kim Team"
 format: pdf
 execute: 
   warning: false
@@ -12,7 +12,8 @@ editor: visual
 #| label: load-pkg-data
 library(tidyverse)
 library(tidymodels)
-# add other packages as needed
+library(ggplot2)
+library(dplyr)
 
 # add code to load data
 pokemon <- read.csv("data/pokemon.csv")
@@ -78,7 +79,71 @@ As you'll notice, the dataset splits the base stats of each pokemon into the ind
 
 ## Initial exploratory data analysis
 
-BRIAN AND DANIEL ADD HERE
+**Distribution of the response variable:**
+
+```{r}
+ggplot(pokemon, aes(x = base_total)) +
+  geom_histogram(binwidth = 10, fill = "blue", color = "black") +
+  geom_vline(xintercept = mean(pokemon$base_total), color = "red", size = 1) +
+  labs(title = "Distribution of Base Total", x = "Base Total")
+
+summary(pokemon$base_total)
+```
+
+ADD DESC HERE BRIAN
+
+**Distributions of one potential quantitative predictor variable and one potential categorical predictor variable:**
+
+-   **Weight(quantitative predictor):**
+
+```{r}
+ggplot(pokemon, aes(x = weight_kg)) +
+  geom_histogram(binwidth = 10, fill = "green", color = "black") +
+  labs(title = "Distribution of Pokemon Weight", x = "Weight (kg)")
+
+summary(pokemon$weight_kg)
+```
+
+ADD DESC HERE BRIAN
+
+-   **Primary types(type 1) (qualitative predictor):**
+
+```{r}
+ggplot(pokemon, aes(x = type1)) +
+  geom_bar(color = "black") +
+  labs(title = "Distribution of Pokemon Primary Types", y = "Frequency", x = "Type 1")
+```
+
+ADD DESC HERE BRIAN + FIX SPACING IF POSSIBLE
+
+**Relationships between response and predictor from above:**
+
+-   **Weight and Base Total:**
+
+```{r}
+ggplot(pokemon, aes(x = weight_kg, y = base_total)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, col = "blue") +
+  labs(title = "Scatter Plot of Base Total vs. Weight", x = "Weight (kg)", y = "Base Total")
+```
+
+ADD DESC HERE AND MAYBE COR?
+
+-   **Base Total and Primary Type (Type 1):**
+
+-not sure how to do
+
+Potential Interaction Effect (Base total and is legendary):
+
+```{r}
+pokemon$is_legendary <- as.factor(pokemon$is_legendary)
+ggplot(pokemon, aes(x = weight_kg, y = base_total, color = is_legendary)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Interaction Between Weight and Legendary Status", x = "Weight (kg)", y = "Base Total")
+```
+
+ADD DESC HERE AND MENTION THE AS FACTOR PART OF CODE
 
 ## Analysis approach
 
