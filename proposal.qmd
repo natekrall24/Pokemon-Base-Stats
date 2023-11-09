@@ -85,9 +85,14 @@ p6 <- ggplot(pokemon, aes(x = weight_kg, y = base_total, color = is_legendary)) 
 ```
 
 ```{r plots, message = F, warning = F, echo = F}
-(p1 / p2)
-(p3 / p4)
-(p5 / p6)
+plot_combined <- (p1 | p2) /
+(p3 | p4) /
+(p5 | p6)
+
+plot_final <- plot_combined + 
+              plot_layout(widths = c(1, 1, 1), heights = c(1, 1))
+
+plot_combined
 ```
 
 ```{r}
