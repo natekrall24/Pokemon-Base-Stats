@@ -175,7 +175,7 @@ pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |>
           against_steel,
           against_water
           ) |>
-  #remove classification
+  #remove classfication
   step_rm(classfication) |>
   #remove all individual stats
   step_rm(attack,
@@ -197,6 +197,7 @@ pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |>
 
   # Convert 'is_legendary' to a factor
   step_mutate(is_legendary = as.factor(is_legendary))
+
 ```
 
 In our recipe, we do the following:
@@ -247,6 +248,11 @@ then,
 
 compare different models with Adj R\^2, AIC, BIC, etc. to choose the best one
 
+```{r}
+#to get RSE and RSQ
+collect_metrics(pokemon_initfit)
+```
+
 POTENTIAL KIND-OF UNIMPORTANT VARIABLES:
 
 weight or height?
@@ -254,6 +260,13 @@ weight or height?
 generation?
 
 check collinearity between generation and pokedex number?
+
+```{r}
+#getting VIF numbers. Only worry about multicolinearity if VIFS are greater than 10
+pokemon_fit_model <- extract_fit_parsnip(pokemon_initfit)
+vif(pokemon_fit_model$fit) |>
+  tidy(digits = 3)
+```
 
 do other general stuff to select the best model (for now, this is just a draft)
 
