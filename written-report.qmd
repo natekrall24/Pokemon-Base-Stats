@@ -20,6 +20,8 @@ library(patchwork)
 library(knitr)
 
 pokemon <- read.csv("data/pokemon.csv")
+pokemon <- pokemon[-774, ]
+pokemon$capture_rate <- as.integer(pokemon$capture_rate)
 ```
 
 # Introduction and Data:
@@ -150,58 +152,21 @@ pokemon_test <- testing(pokemon_split)
 We first split our data into 75% training and 25% testing data.
 
 ```{r}
-pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |>
-  #make name's role ID
-  update_role(name, new_role = "ID") |>
-  #remove abilities
-  step_rm(abilities) |>
-  #remove all "against" variables to eliminate redundancy & collinearity
-  step_rm(against_bug,
-          against_dark,
-          against_dragon,
-          against_electric,
-          against_fairy,
-          against_fight,
-          against_fire,
-          against_flying,
-          against_ghost,
-          against_grass,
-          against_ground,
-          against_ice,
-          against_normal,
-          against_poison,
-          against_psychic,
-          against_rock,
-          against_steel,
-          against_water
-          ) |>
-  #remove classfication
-  step_rm(classfication) |>
-  #remove all individual stats
-  step_rm(attack,
-          defense,
-          hp,
-          sp_attack,
-          sp_defense,
-          speed,
-          ) |>
-  #remove japanese name
+pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
+  update_role(name, new_role = "ID") |> 
+  #remove abilities 
+  step_rm(abilities) |> 
+  #remove all "against" variables to eliminate redundancy & collinearity 
+  step_rm(against_bug, against_dark, against_dragon, against_electric, against_fairy, against_fight, against_fire, against_flying, against_ghost, against_grass, against_ground, against_ice, against_normal, against_poison, against_psychic, against_rock, against_steel, against_water ) |>
+  #remove types (for now)
+   step_rm(type1, type2) |>
+  #remove classification 
+  step_rm(classfication) |> 
+  #remove all individual stats 
+  step_rm(attack, defense, hp, sp_attack, sp_defense, speed) |> 
+  #remove japanese name 
   step_rm(japanese_name) |>
-  
-  #Ensure 'type1' and 'type2' are factors
-  step_mutate(type1 = as.factor(type1), type2 = as.factor(type2)) |>
-  
-  # Convert 'capture_rate' to numeric (isn't numeric originally)
-  step_mutate(capture_rate = as.numeric(capture_rate)) |>
-
-  # Convert 'is_legendary' to a factor
-  step_mutate(is_legendary = as.factor(is_legendary))|>
-  
-  
-  step_naomit(all_predictors()) |>
-
-  #then convert to dummy vars
-  step_dummy(all_nominal(), -all_outcomes()) 
+  step_normalize(experience_growth)
 ```
 
 In our recipe, we do the following:
@@ -232,6 +197,12 @@ pokemon_initfit <- pokemon_wflow |>
   fit(data = pokemon_train)
 
 tidy(pokemon_initfit)
+```
+
+```{r}
+pokemon_fit_model <- extract_fit_parsnip(pokemon_initfit)
+pokemon_aug <- augment(pokemon_fit_model$fit)
+rsq(pokemon_aug, truth = pokemon_fit_model$base_total, estimate = .fitted)
 ```
 
 BRIAN:
