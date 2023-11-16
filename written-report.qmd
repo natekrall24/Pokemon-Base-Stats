@@ -448,10 +448,10 @@ Independence - The independence condition is satisfied as we established earlier
 **Initial results of our model**
 
 ```{r}
-print(56.46428171)
+sqrt(mean((pokemon_aug$.resid)^2))
 ```
 
-We calculated our RMSE for the final model to be 56.464 base total points, meaning the average residual length is 56.464 base total points.
+We calculated our RMSE for the final model to be 72.81 base total points, meaning the average residual length is 72.81 base total points.
 
 ```{r}
 pokemon_fit_model123 <- extract_fit_parsnip(pokemon_fit_final)
