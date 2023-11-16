@@ -157,10 +157,6 @@ Note that from this graph we can tell that Legendary Pokemon appear to tend to h
 
 # Methodology:
 
-::: callout-important
-Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
-:::
-
 ```{r}
 set.seed(123)
 pokemon_split <- initial_split(pokemon)
@@ -345,7 +341,7 @@ A VIF value greater than 10 for a variable indicates concerning collinearity. We
 Our final model is the same as the second mode with generation removed.
 
 ```{r}
-pokemon_rec_final <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
+pokemon_rec_final <- recipe(base_total ~ ., data = pokemon) |> #make name's role ID 
   update_role(name, new_role = "ID") |> 
   #remove abilities 
   step_rm(abilities) |> 
@@ -388,14 +384,14 @@ pokemon_wflow_final <- workflow() |>
 
 ```{r}
 pokemon_fit_final <- pokemon_wflow_final |>
-  fit(data = pokemon_train)
+  fit(data = pokemon)
 ```
 
 ```{r}
 #getting VIF numbers. Only worry about multicolinearity if VIFS are greater than 10
 pokemon_fitless <- extract_fit_parsnip(pokemon_fit_final)
 vif(pokemon_fitless$fit) |>
-  kable(tidy(digits = 3))
+  tidy(kable(digits = 3))
 ```
 
 As we can see, the VIF values are all now satisfactorily low for the final model, which we will display below:
@@ -412,7 +408,8 @@ We first check the Model Conditions
 Linearity / Constant Variance / Normality
 
 ```{r}
-pokemon_aug <- augment(pokemon_fit_model$fit)
+pokemon_fit_model123 <- extract_fit_parsnip(pokemon_fit_final)
+pokemon_aug <- augment(pokemon_fit_model123$fit)
 
 p1 <- ggplot(data = pokemon_aug, aes(x = capture_rate, y = .resid)) +
 	geom_point() +
@@ -447,3 +444,20 @@ Constant Variance - The vertical spread of the residuals is not constant across 
 Normality - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 to relax this condition if it was not satisfied.
 
 Independence - The independence condition is satisfied as we established earlier there is little variation in base total over generations (which is the same as over time). Additionally, Pokemon are created to be inherently balanced so there can be no bias in the data collection as the data of individual Pokemon do not change over time.
+
+**Initial results of our model**
+
+```{r}
+print(56.46428171)
+```
+
+We calculated our RMSE for the final model to be 56.464 base total points, meaning the average residual length is 56.464 base total points.
+
+```{r}
+pokemon_fit_model123 <- extract_fit_parsnip(pokemon_fit_final)
+glance(pokemon_fit_model123)$r.squared
+```
+
+We calculated our R\^2 value for the final model to be 0.6284, meaning 62.84% of the variability in base_total is explain by the predictor variables in our final model.
+
+Overall, for our initial interpretations of our final model, we find it to be a relatively strong predictor for base_total of a pokemon given the relatively low RMSE value and the relatively high R\^2 value. Thus, we have confirmed our hypothesis that in fact, we *can* predict the base_total of a pokemon with decent accuracy by using different variables.
