@@ -149,7 +149,7 @@ pokemon_train <- training(pokemon_split)
 pokemon_test <- testing(pokemon_split)
 ```
 
-We first split our data into 75% training and 25% testing data.
+We first randomly split our data of 800 different pokemon into 75% training and 25% testing data. Note that we removed one pokemon from the original 801 pokemon, Minior, from the dataset, since it has 2 different forms and has an uninterpretable capture rate. We noticed that while reading the .csv file, R automatically translated the \*capture_rate\* variable to characters because Minior's capture rate was listed as: "30 (Meteorite)255 (Core)". We decided to exclude this observation from the model because of its uninterpretable characteristics, and after, we casted \*capture_rate\* an integer instead of a character.
 
 ```{r}
 pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
@@ -196,28 +196,14 @@ pokemon_wflow <- workflow() |>
 pokemon_initfit <- pokemon_wflow |>
   fit(data = pokemon_train)
 
-tidy(pokemon_initfit)
+tidy(pokemon_initfit) |>
+  kable(digits = 3)
 ```
 
 ```{r}
 pokemon_fit_model <- extract_fit_parsnip(pokemon_initfit)
-pokemon_aug <- augment(pokemon_fit_model$fit)
-rsq(pokemon_aug, truth = pokemon_fit_model$base_total, estimate = .fitted)
+glance(pokemon_fit_model)$r.squared
 ```
-
-BRIAN:
-
-1.  fix recipe and model so that capture rate is taken as a continuous predictor
-
-2.  make sure is_legendary is working properly as a categorical predictor
-
-3.  make sure type1 and type2 are functioning properly
-
-4.  fix anything else with the model that's weird that i'm not noticing
-
-5.  keep checking by running the linear model and looking for a reasonable result, once you get there, move on
-
-6.  
 
 then,
 
