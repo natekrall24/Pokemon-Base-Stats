@@ -219,6 +219,8 @@ pokemon_wflow <- workflow() |>
   add_recipe(pokemon_rec)
 ```
 
+After bringing the training data through our recipe, we fit the data under a multiple linear regression model, which is outputted below:
+
 ```{r}
 pokemon_initfit <- pokemon_wflow |>
   fit(data = pokemon_train)
@@ -226,6 +228,8 @@ pokemon_initfit <- pokemon_wflow |>
 tidy(pokemon_initfit) |>
   kable(digits = 3)
 ```
+
+As you can see from above base_egg_steps, base_happiness, and weight_kg are
 
 ```{r}
 pokemon_rec_less <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
