@@ -1,6 +1,6 @@
 ---
 title: "Predicting a Pokémon's Strength Using Variables Other Than Base Stats"
-author: "Team Name: Nate Krall, Daniel Cohen, Brian Kim"
+author: "STA 210 BDN: Nate Krall, Daniel Cohen, Brian Kim"
 date: "11/15/2023"
 format: pdf
 execute: 
@@ -187,7 +187,16 @@ pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |>
           ) |>
   #remove japanese name
   step_rm(japanese_name) |>
-  step_dummy(type1, type2)
+  
+  #Ensure 'type1' and 'type2' are factors, then convert to dummy vars
+  step_mutate(type1 = as.factor(type1), type2 = as.factor(type2)) |>
+  step_dummy(all_nominal(), -all_outcomes()) |>
+  
+  # Convert 'capture_rate' to numeric (isn't numeric originally)
+  step_mutate(capture_rate = as.numeric(capture_rate)) |>
+
+  # Convert 'is_legendary' to a factor
+  step_mutate(is_legendary = as.factor(is_legendary))
 ```
 
 In our recipe, we do the following:
@@ -198,7 +207,11 @@ In our recipe, we do the following:
 
 3.  We remove all against\_\* variables, since the predictive power of these variables are already represented by their types, so we reduce redundancy and collinearity by doing so.
 
-4.  We finally create 1-hot encoding dummy variables for type1 and type2 so they can be used in our model.
+4.  We create 1-hot encoding dummy variables for type1 and type2 so they can be used in our model.
+
+5.  We make capture rate a numeric variable, as it is not a numeric variable in the original data set.
+
+6.  We convert is_legendary to a factor, as it is more useful as a categorical variable in our model.
 
 ```{r}
 pokemon_spec <- linear_reg() |>
@@ -207,8 +220,6 @@ pokemon_spec <- linear_reg() |>
 pokemon_wflow <- workflow() |>
   add_model(pokemon_spec) |>
   add_recipe(pokemon_rec)
-
-pokemon_wflow
 ```
 
 ```{r}
@@ -229,6 +240,8 @@ BRIAN:
 4.  fix anything else with the model that's weird that i'm not noticing
 
 5.  keep checking by running the linear model and looking for a reasonable result, once you get there, move on
+
+6.  
 
 then,
 
