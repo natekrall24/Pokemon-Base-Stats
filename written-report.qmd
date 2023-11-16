@@ -18,6 +18,7 @@ library(ggplot2)
 library(dplyr)
 library(patchwork)
 library(knitr)
+library(rms)
 
 pokemon <- read.csv("data/pokemon.csv")
 pokemon <- pokemon[-774, ]
@@ -185,6 +186,7 @@ pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role
   #remove japanese name 
   step_rm(japanese_name) |>
   step_rm(percentage_male) |>
+    step_normalize(experience_growth) |>
    step_center(experience_growth,
               base_egg_steps,
               base_happiness,
@@ -229,7 +231,7 @@ tidy(pokemon_initfit) |>
   kable(digits = 3)
 ```
 
-As you can see from above base_egg_steps, base_happiness, and weight_kg are
+As you can see from above base_egg_steps, base_happiness, and weight_kg are three candidates for variables to remove from the model, since we notice their p-values are all greater than 0.1, meaning they are potentially statistically insignificant predictors. Thus, the next step in our method is compare two models through a series of tests: the one model being our original model with all predictors after running our feature engineering, and one with base_egg_steps, base_happiness, and weight_kg removed to select a model that is either consice with enough comprehensiveness or as comprehensive as we can make it.
 
 ```{r}
 pokemon_rec_less <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
@@ -259,8 +261,7 @@ pokemon_rec_less <- recipe(base_total ~ ., data = pokemon_train) |> #make name's
               generation) |>
   step_rm(base_egg_steps, 
           base_happiness, 
-          weight_kg,
-          generation)
+          weight_kg)
 ```
 
 ```{r}
@@ -272,6 +273,8 @@ pokemon_wflow2 <- workflow() |>
   add_recipe(pokemon_rec_less)
 ```
 
+We run the training data through a very similar recipe for the second model except that base_egg_steps, base_happiness, and weight_kg are removed. The output of running multiple linear regression for this model is shown below:
+
 ```{r}
 pokemon_secondfit <- pokemon_wflow2 |>
   fit(data = pokemon_train)
@@ -280,15 +283,21 @@ tidy(pokemon_secondfit) |>
   kable(digits = 3)
 ```
 
+We then conducted two tests to decipher which model is best to select and use for our final model: 1 comparing the AIC, BIC, and adjusted r squared for the models, and another comparing the results of V-fold cross validation for the two models. The output for the first test is shown below:
+
 ```{r}
-glance(pokemon_fit_model) |> 
+glance(pokemon_initfit) |> 
   select(AIC, BIC, adj.r.squared)
 
 glance(pokemon_secondfit) |> 
   select(AIC, BIC, adj.r.squared)
 ```
 
-Cross validation for 1st model
+From this test, we note that both AIC and BIC are lower for the second, reduced model than the first model. The adjusted r squared values are very similar in size. With this information, it would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted r squared value.
+
+However, we run one more test, v-fold cross validation, to compare the models once again to have another point of evidence to base our decision off of. The results of this second test are below:
+
+Cross validation results for the 1st, full model:
 
 ```{r}
 set.seed(123)
@@ -303,7 +312,7 @@ pokemon_initfitV <- pokemon_wflowV |>
 collect_metrics(pokemon_initfitV)
 ```
 
-Cross validation for 2nd model
+Cross validation for the 2nd, reduced model:
 
 ```{r}
 set.seed(123)
@@ -318,11 +327,123 @@ pokemon_initfitV2 <- pokemon_wflowV2 |>
 collect_metrics(pokemon_initfitV2)
 ```
 
+We notice that the RMSE value from the cross validation of the second model is lower than the RMSE value from the cross validation of the first full model, while the r squared values from both models have negligible difference, leading us to believe that the second model performs better in terms of predicting a pokemon's base stat total.
+
+From the results of these two tests, **we can confidently select model number 2, the reduced model**.
+
+The final check of our methodology is to examine the VIF values for our predictors to confirm there is no collinearity present in our model:
+
 ```{r}
 #getting VIF numbers. Only worry about multicolinearity if VIFS are greater than 10
-pokemon_fit_model <- extract_fit_parsnip(pokemon_initfit)
-vif(pokemon_fit_model$fit) |>
+pokemon_fitless <- extract_fit_parsnip(pokemon_secondfit)
+vif(pokemon_fitless$fit) |>
   tidy(digits = 3)
 ```
 
+A VIF value greater than 10 for a variable indicates concerning collinearity. We notice that pokedex_number and generation both have VIF values \> 40, while all other variables have very low VIF values, meaning pokedex_number and generation appear to depend heavily on each other. This makes perfect sense -- as generations of pokemon are simply intervals of pokedex numbers, or in other words, generation divides all values 1-800 of pokedex_number into different intervals (for example, generation 1 is pokedex numbers 1-151). Thus, we should remove 1 of the 2 variables before continuing with our final model. We choose to delete generation, since it is simply a far more discrete form of pokedex_number.
+
+Our final model is the same as the second mode with generation removed.
+
+```{r}
+pokemon_rec_final <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
+  update_role(name, new_role = "ID") |> 
+  #remove abilities 
+  step_rm(abilities) |> 
+  #remove all "against" variables to eliminate redundancy & collinearity 
+  step_rm(against_bug, against_dark, against_dragon, against_electric, against_fairy, against_fight, against_fire, against_flying, against_ghost, against_grass, against_ground, against_ice, against_normal, against_poison, against_psychic, against_rock, against_steel, against_water ) |>
+  #remove types (for now)
+   step_rm(type1, type2) |>
+  #remove classification 
+  step_rm(classfication) |> 
+  #remove all individual stats 
+  step_rm(attack, defense, hp, sp_attack, sp_defense, speed) |> 
+  #remove japanese name 
+  step_rm(japanese_name) |>
+  step_rm(percentage_male) |>
+  #center all quantitative predictors
+  step_center(experience_growth,
+              base_egg_steps,
+              base_happiness,
+              capture_rate,
+              experience_growth,
+              height_m,
+              pokedex_number,
+              weight_kg,
+              generation) |>
+  step_normalize(experience_growth) |>
+  step_rm(base_egg_steps, 
+          base_happiness, 
+          weight_kg,
+          generation)
+```
+
+```{r}
+pokemon_spec_final <- linear_reg() |>
+  set_engine("lm")
+
+pokemon_wflow_final <- workflow() |>
+  add_model(pokemon_spec_final) |>
+  add_recipe(pokemon_rec_final)
+```
+
+```{r}
+pokemon_fit_final <- pokemon_wflow_final |>
+  fit(data = pokemon_train)
+```
+
+```{r}
+#getting VIF numbers. Only worry about multicolinearity if VIFS are greater than 10
+pokemon_fitless <- extract_fit_parsnip(pokemon_fit_final)
+vif(pokemon_fitless$fit) |>
+  kable(tidy(digits = 3))
+```
+
+As we can see, the VIF values are all now satisfactorily low for the final model, which we will display below:
+
+```{r}
+tidy(pokemon_fit_final) |>
+  kable(digits = 3)
+```
+
 # Results:
+
+We first check the Model Conditions
+
+Linearity / Constant Variance / Normality
+
+```{r}
+pokemon_aug <- augment(pokemon_fit_model$fit)
+
+p1 <- ggplot(data = pokemon_aug, aes(x = capture_rate, y = .resid)) +
+	geom_point() +
+	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(x = "Capture Rate", y = "Residuals")
+p2 <- ggplot(data = pokemon_aug, aes(x = experience_growth, y = .resid)) +
+	geom_point() +
+	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(x = "Experience Growth", y = "Residuals")
+p3 <- ggplot(data = pokemon_aug, aes(x = height_m, y = .resid)) +
+	geom_point() +
+	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(x = "Height (m)", y = "Residuals")
+p4 <- ggplot(data = pokemon_aug, aes(x = pokedex_number, y = .resid)) +
+	geom_point() +
+	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(x = "Pokedex Number", y = "Residuals")
+p5 <- ggplot(data = pokemon_aug, aes(x = is_legendary, y = .resid)) +
+	geom_point() +
+	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(x = "is Legendary", y = "Residuals")
+norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
+  geom_histogram()
+(p1 + p2) / (p3 + p4) / (p5 + norm)
+
+```
+
+Linearity condition - satisfied because there is no clear patterns in the residuals vs predictor variables or a fanning effect
+
+Constant Variance - The vertical spread of the residuals is not constant across the plot
+
+Normality - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 to relax this condition if it was not satisfied.
+
+Independence - The independence condition is satisfied as we established earlier there is little variation in base total over generations (which is the same as over time). Additionally, Pokemon are created to be inherently balanced so there can be no bias in the data collection as the data of individual Pokemon do not change over time.
