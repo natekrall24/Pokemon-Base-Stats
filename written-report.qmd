@@ -196,6 +196,9 @@ pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |>
 
   # Convert 'is_legendary' to a factor
   step_mutate(is_legendary = as.factor(is_legendary))|>
+  
+  
+  step_naomit(all_predictors()) |>
 
   #then convert to dummy vars
   step_dummy(all_nominal(), -all_outcomes()) 
