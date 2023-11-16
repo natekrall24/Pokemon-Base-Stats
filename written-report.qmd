@@ -166,7 +166,16 @@ pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role
   step_rm(attack, defense, hp, sp_attack, sp_defense, speed) |> 
   #remove japanese name 
   step_rm(japanese_name) |>
-  step_normalize(experience_growth)
+   step_center(experience_growth,
+              base_egg_steps,
+              base_happiness,
+              capture_rate,
+              experience_growth,
+              height_m,
+              percentage_male,
+              pokedex_number,
+              weight_kg,
+              generation)
 ```
 
 In our recipe, we do the following:
