@@ -18,6 +18,7 @@ library(ggplot2)
 library(dplyr)
 library(patchwork)
 library(knitr)
+library(rms)
 
 pokemon <- read.csv("data/pokemon.csv")
 pokemon <- pokemon[-774, ]
@@ -316,8 +317,8 @@ collect_metrics(pokemon_initfitV2)
 
 ```{r}
 #getting VIF numbers. Only worry about multicolinearity if VIFS are greater than 10
-pokemon_fit_model <- extract_fit_parsnip(pokemon_initfit)
-vif(pokemon_fit_model$fit) |>
+pokemon_fitV <- extract_fit_parsnip(pokemon_secondfit)
+vif(pokemon_fitV$fit) |>
   tidy(digits = 3)
 ```
 
