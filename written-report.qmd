@@ -188,16 +188,17 @@ pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |>
   #remove japanese name
   step_rm(japanese_name) |>
   
-  #Ensure 'type1' and 'type2' are factors, then convert to dummy vars
+  #Ensure 'type1' and 'type2' are factors
   step_mutate(type1 = as.factor(type1), type2 = as.factor(type2)) |>
-  step_dummy(all_nominal(), -all_outcomes()) |>
   
   # Convert 'capture_rate' to numeric (isn't numeric originally)
   step_mutate(capture_rate = as.numeric(capture_rate)) |>
 
   # Convert 'is_legendary' to a factor
-  step_mutate(is_legendary = as.factor(is_legendary))
+  step_mutate(is_legendary = as.factor(is_legendary))|>
 
+  #then convert to dummy vars
+  step_dummy(all_nominal(), -all_outcomes()) 
 ```
 
 In our recipe, we do the following:
