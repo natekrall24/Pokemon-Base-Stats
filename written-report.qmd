@@ -17,6 +17,8 @@ library(tidymodels)
 library(ggplot2)
 library(dplyr)
 library(patchwork)
+library(knitr)
+
 pokemon <- read.csv("data/pokemon.csv")
 ```
 
@@ -138,4 +140,110 @@ Note that from this graph we can tell that Legendary Pokemon appear to tend to h
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
 :::
 
-NATE DO RECIPE
+```{r}
+set.seed(123)
+pokemon_split <- initial_split(pokemon)
+pokemon_train <- training(pokemon_split)
+pokemon_test <- testing(pokemon_split)
+```
+
+We first split our data into 75% training and 25% testing data.
+
+```{r}
+pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |>
+  #make name's role ID
+  update_role(name, new_role = "ID") |>
+  #remove abilities
+  step_rm(abilities) |>
+  #remove all "against" variables to eliminate redundancy & collinearity
+  step_rm(against_bug,
+          against_dark,
+          against_dragon,
+          against_electric,
+          against_fairy,
+          against_fight,
+          against_fire,
+          against_flying,
+          against_ghost,
+          against_grass,
+          against_ground,
+          against_ice,
+          against_normal,
+          against_poison,
+          against_psychic,
+          against_rock,
+          against_steel,
+          against_water
+          ) |>
+  #remove classification
+  step_rm(classfication) |>
+  #remove all individual stats
+  step_rm(attack,
+          defense,
+          hp,
+          sp_attack,
+          sp_defense,
+          speed,
+          ) |>
+  #remove japanese name
+  step_rm(japanese_name) |>
+  step_dummy(type1, type2)
+```
+
+In our recipe, we do the following:
+
+1.  We update the role of "name" to be an ID.
+
+2.  We remove irrelevant, non-predicting information like abilities, classification, and Japanese name.
+
+3.  We remove all against\_\* variables, since the predictive power of these variables are already represented by their types, so we reduce redundancy and collinearity by doing so.
+
+4.  We finally create 1-hot encoding dummy variables for type1 and type2 so they can be used in our model.
+
+```{r}
+pokemon_spec <- linear_reg() |>
+  set_engine("lm")
+
+pokemon_wflow <- workflow() |>
+  add_model(pokemon_spec) |>
+  add_recipe(pokemon_rec)
+
+pokemon_wflow
+```
+
+```{r}
+pokemon_initfit <- pokemon_wflow |>
+  fit(data = pokemon_train)
+
+tidy(pokemon_initfit)
+```
+
+BRIAN:
+
+1.  fix recipe and model so that capture rate is taken as a continuous predictor
+
+2.  make sure is_legendary is working properly as a categorical predictor
+
+3.  make sure type1 and type2 are functioning properly
+
+4.  fix anything else with the model that's weird that i'm not noticing
+
+5.  keep checking by running the linear model and looking for a reasonable result, once you get there, move on
+
+then,
+
+compare different models with Adj R\^2, AIC, BIC, etc. to choose the best one
+
+POTENTIAL KIND-OF UNIMPORTANT VARIABLES:
+
+weight or height?
+
+generation?
+
+check collinearity between generation and pokedex number?
+
+do other general stuff to select the best model (for now, this is just a draft)
+
+I'll pick up where you leave off when I'm back
+
+1.  
