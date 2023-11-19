@@ -167,7 +167,7 @@ pokemon_test <- testing(pokemon_split)
 We first randomly split our data of 800 different pokemon into 75% training and 25% testing data so we can both train and evaluate our model.
 
 ```{r}
-pokemon_rec <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
+pokemon_rec_full <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
   update_role(name, new_role = "ID") |> 
   #remove abilities 
   step_rm(abilities) |> 
@@ -209,21 +209,21 @@ Next, we take the training data through a recipe to ready it for our analysis. W
 4.  We mean-center all quantitative predictors so our intercept is interpretable.
 
 ```{r}
-pokemon_spec <- linear_reg() |>
+pokemon_spec_full <- linear_reg() |>
   set_engine("lm")
 
-pokemon_wflow <- workflow() |>
-  add_model(pokemon_spec) |>
-  add_recipe(pokemon_rec)
+pokemon_wflow_full <- workflow() |>
+  add_model(pokemon_spec_full) |>
+  add_recipe(pokemon_rec_full)
 ```
 
 After bringing the training data through our recipe, we fit the data under a multiple linear regression model, which is outputted below:
 
 ```{r}
-pokemon_initfit <- pokemon_wflow |>
+pokemon_fit_full <- pokemon_wflow_full |>
   fit(data = pokemon_train)
 
-tidy(pokemon_initfit) |>
+tidy(pokemon_fit_full) |>
   kable(digits = 3)
 ```
 
@@ -261,31 +261,31 @@ pokemon_rec_less <- recipe(base_total ~ ., data = pokemon_train) |> #make name's
 ```
 
 ```{r}
-pokemon_spec2 <- linear_reg() |>
+pokemon_spec_less <- linear_reg() |>
   set_engine("lm")
 
-pokemon_wflow2 <- workflow() |>
-  add_model(pokemon_spec2) |>
+pokemon_wflow_less <- workflow() |>
+  add_model(pokemon_spec_less) |>
   add_recipe(pokemon_rec_less)
 ```
 
 We run the training data through a very similar recipe for the second model except that base_egg_steps, base_happiness, and weight_kg are removed. The output of running multiple linear regression for this model is shown below:
 
 ```{r}
-pokemon_secondfit <- pokemon_wflow2 |>
+pokemon_fit_less <- pokemon_wflow_less |>
   fit(data = pokemon_train)
 
-tidy(pokemon_secondfit) |>
+tidy(pokemon_fit_less) |>
   kable(digits = 3)
 ```
 
 We then conducted two tests to decipher which model is best to select and use for our final model: 1 comparing the AIC, BIC, and adjusted r squared for the models, and another comparing the results of V-fold cross validation for the two models. The output for the first test is shown below:
 
 ```{r}
-glance(pokemon_initfit) |> 
+glance(pokemon_fit_full) |> 
   select(AIC, BIC, adj.r.squared)
 
-glance(pokemon_secondfit) |> 
+glance(pokemon_fit_less) |> 
   select(AIC, BIC, adj.r.squared)
 ```
 
@@ -299,13 +299,13 @@ Cross validation results for the 1st, full model:
 set.seed(123)
 folds <- vfold_cv(pokemon_train, v = 15)
 
-pokemon_wflowV <- workflow() |>
-	add_model(pokemon_spec) |>
-	add_recipe(pokemon_rec)
+pokemon_wflowV_full <- workflow() |>
+	add_model(pokemon_spec_full) |>
+	add_recipe(pokemon_rec_full)
 
-pokemon_initfitV <- pokemon_wflowV |>
+pokemon_fitV_full <- pokemon_wflowV_full |>
 	fit_resamples(folds)
-collect_metrics(pokemon_initfitV)
+collect_metrics(pokemon_fitV_full)
 ```
 
 Cross validation for the 2nd, reduced model:
@@ -314,13 +314,13 @@ Cross validation for the 2nd, reduced model:
 set.seed(123)
 folds2 <- vfold_cv(pokemon_train, v = 15)
 
-pokemon_wflowV2 <- workflow() |>
-	add_model(pokemon_spec2) |>
+pokemon_wflowV_less <- workflow() |>
+	add_model(pokemon_spec_less) |>
 	add_recipe(pokemon_rec_less)
 
-pokemon_initfitV2 <- pokemon_wflowV2 |>
+pokemon_fitV_less <- pokemon_wflowV_less |>
 	fit_resamples(folds)
-collect_metrics(pokemon_initfitV2)
+collect_metrics(pokemon_fitV_less)
 ```
 
 We notice that the RMSE value from the cross validation of the second model is lower than the RMSE value from the cross validation of the first full model, while the r squared values from both models have negligible difference, leading us to believe that the second model performs better in terms of predicting a pokemon's base stat total.
@@ -331,14 +331,14 @@ The final check of our methodology is to examine the VIF values for our predicto
 
 ```{r}
 #getting VIF numbers. Only worry about multicolinearity if VIFS are greater than 10
-pokemon_fitless <- extract_fit_parsnip(pokemon_secondfit)
+pokemon_fitless <- extract_fit_parsnip(pokemon_fit_less)
 vif(pokemon_fitless$fit) |>
   tidy(digits = 3)
 ```
 
 A VIF value greater than 10 for a variable indicates concerning collinearity. We notice that pokedex_number and generation both have VIF values \> 40, while all other variables have very low VIF values, meaning pokedex_number and generation appear to depend heavily on each other. This makes perfect sense -- as generations of pokemon are simply intervals of pokedex numbers, or in other words, generation divides all values 1-800 of pokedex_number into different intervals (for example, generation 1 is pokedex numbers 1-151). Thus, we should remove 1 of the 2 variables before continuing with our final model. We choose to delete generation, since it is simply a far more discrete form of pokedex_number.
 
-Our final model is the same as the second mode with generation removed.
+Our final model is the same as the second model with generation removed.
 
 ```{r}
 pokemon_rec_final <- recipe(base_total ~ ., data = pokemon) |> #make name's role ID 
@@ -401,11 +401,23 @@ tidy(pokemon_fit_final) |>
   kable(digits = 3)
 ```
 
+The equation for the final model would be
+
+$$
+base\_total = \beta_0 + \beta_1 * capture\_rate + \beta_2 * experience\_growth + \beta_3 * height\_m + \beta_4 * pokedex\_number + \beta_5 * is\_legendary1
+$$
+
+Filling the equation in we have
+
+$$
+base\_total = 419.982 - 0.839 * capture\_rate + 2.412* experience\_growth + 28.62 * height\_m + 0.024 * pokedex\_number + 88.596 * is\_legendary1
+$$
+
 # Results:
 
 We first check the Model Conditions
 
-Linearity / Constant Variance / Normality
+**Model Conditions: Linearity / Constant Variance / Normality**
 
 ```{r}
 pokemon_fit_model123 <- extract_fit_parsnip(pokemon_fit_final)
@@ -414,36 +426,37 @@ pokemon_aug <- augment(pokemon_fit_model123$fit)
 p1 <- ggplot(data = pokemon_aug, aes(x = capture_rate, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Capture Rate", y = "Residuals")
+  labs(x = "Capture Rate", y = "Residuals", title = "Residuals vs Capture Rate")
 p2 <- ggplot(data = pokemon_aug, aes(x = experience_growth, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Experience Growth", y = "Residuals")
+  labs(x = "Experience Growth", y = "Residuals", title = "Residuals vs Experience Growth")
 p3 <- ggplot(data = pokemon_aug, aes(x = height_m, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Height (m)", y = "Residuals")
+  labs(x = "Height (m)", y = "Residuals", title = "Residuals vs Height(m)")
 p4 <- ggplot(data = pokemon_aug, aes(x = pokedex_number, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Pokedex Number", y = "Residuals")
+  labs(x = "Pokedex Number", y = "Residuals", title = "Residuals vs Pokedex Number")
 p5 <- ggplot(data = pokemon_aug, aes(x = is_legendary, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "is Legendary", y = "Residuals")
+  labs(x = "is Legendary", y = "Residuals", title = "Residuals vs is_Legendary")
 norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
-  geom_histogram()
+  geom_histogram() + 
+  labs(title = "Distribution of residuals")
 (p1 + p2) / (p3 + p4) / (p5 + norm)
 
 ```
 
-Linearity condition - satisfied because there is no clear patterns in the residuals vs predictor variables or a fanning effect
+**Linearity condition** - satisfied because there is no clear patterns in the residuals vs predictor variables or a fanning effect
 
-Constant Variance - The vertical spread of the residuals is not constant across the plot
+**Constant Variance** - The vertical spread of the residuals is not constant across the plot
 
-Normality - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 to relax this condition if it was not satisfied.
+**Normality** - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 to relax this condition if it was not satisfied.
 
-Independence - The independence condition is satisfied as we established earlier there is little variation in base total over generations (which is the same as over time). Additionally, Pokemon are created to be inherently balanced so there can be no bias in the data collection as the data of individual Pokemon do not change over time.
+**Independence** - The independence condition is satisfied as we established earlier there is little variation in base total over generations (which is the same as over time). Additionally, Pokemon are created to be inherently balanced so there can be no bias in the data collection as the data of individual Pokemon do not change over time.
 
 **Initial results of our model**
 
