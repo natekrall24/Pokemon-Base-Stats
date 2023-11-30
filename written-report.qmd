@@ -320,7 +320,6 @@ pokemon_wflowV_less <- workflow() |>
 
 pokemon_fitV_less <- pokemon_wflowV_less |>
 	fit_resamples(folds)
-collect_metrics(pokemon_fitV_less)
 ```
 
 We notice that the RMSE value from the cross validation of the second model is lower than the RMSE value from the cross validation of the first full model, while the r squared values from both models have negligible difference, leading us to believe that the second model performs better in terms of predicting a pokemon's base stat total.
@@ -450,11 +449,11 @@ norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
 
 ```
 
-**Linearity condition** - satisfied because there is no clear patterns in the residuals vs predictor variables or a fanning effect
+**Linearity condition** - This condition is satisfied as there is no clear patterns in the residuals vs predictor variables such as a fanning pattern.
 
-**Constant Variance** - The vertical spread of the residuals is not constant across the plot
+**Constant Variance** - The vertical spread of the residuals is constant across the plots of residuals versus fitted values, therefore this condition is satisfied.
 
-**Normality** - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 to relax this condition if it was not satisfied.
+**Normality** - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 so we can relax this condition.
 
 **Independence** - The independence condition is satisfied as we established earlier there is little variation in base total over generations (which is the same as over time). Additionally, Pokemon are created to be inherently balanced so there can be no bias in the data collection as the data of individual Pokemon do not change over time.
 
@@ -464,13 +463,13 @@ norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
 sqrt(mean((pokemon_aug$.resid)^2))
 ```
 
-We calculated our RMSE for the final model to be 72.81 base total points, meaning the average residual length is 72.81 base total points.
+We calculated our RMSE for the final model to be 72.81 base total points, meaning the average base total is 72.81 base total points away from the predicted value of base total points.
 
 ```{r}
 pokemon_fit_model123 <- extract_fit_parsnip(pokemon_fit_final)
 glance(pokemon_fit_model123)$r.squared
 ```
 
-We calculated our R\^2 value for the final model to be 0.6284, meaning 62.84% of the variability in base_total is explain by the predictor variables in our final model.
+We calculated our $R^2$ value for the final model to be 0.6284, meaning 62.84% of the variability in base_total is explained by the predictor variables in our final model.
 
-Overall, for our initial interpretations of our final model, we find it to be a relatively strong predictor for base_total of a pokemon given the relatively low RMSE value and the relatively high R\^2 value. Thus, we have confirmed our hypothesis that in fact, we *can* predict the base_total of a pokemon with decent accuracy by using different variables.
+Overall, for our initial interpretations of our final model, we find it to be a relatively strong predictor for base_total of a Pokemon given the relatively low RMSE value and the relatively high R\^2 value. Thus, we have confirmed our hypothesis that in fact, we *can* predict the base_total of a Pokemon with decent accuracy by using different variables.
