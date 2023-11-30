@@ -516,10 +516,12 @@ rsq(pokemon_test_pred, truth = base_total, estimate = .pred)
 rmse(pokemon_test_pred, truth = base_total, estimate = .pred)
 ```
 
-We calculated our $R^2$ value for the final model to be 0.6284, meaning 62.84% of the variability in base_total is explained by the predictor variables in our final model.
+When we compare the $R^2$ values, that of the training model was .641 while the testing model had a $R^2$ value of .577. This is to be expected since the training data has been trained on so it should be a better predictor than the testing model. When we compare the RMSE for the training and testing data, we can see that the RMSE for the training set was 71.1 while the RMSE of the testing set was 80.69. Since lower RMSE values indicate a better fit to the model and we can see that the RMSE of the testing set was greater than that of the training set which means the training data once again is a better predictor and this is once again to be expected since training data was trained on so it should predict the model better. Since the difference in the $R^2$ and the RMSE values between the training and the testing data wasn't too significant, this shows that our model doesn't over fit the data.
 
-Overall, for our initial interpretations of our final model, we find it to be a relatively strong predictor for base_total of a Pokemon given the relatively low RMSE value and the relatively high R\^2 value. Thus, we have confirmed our hypothesis that in fact, we *can* predict the base_total of a Pokemon with decent accuracy by using different variables.
+Overall, for our initial interpretations of our final model, we find it to be a relatively strong predictor for base_total of a Pokemon given the relatively low RMSE value and the relatively high $R^2$ value. Thus, we have confirmed our hypothesis that in fact, we *can* predict the base_total of a Pokemon with decent accuracy by using different variables.
 
 # Discussion + Conclusion:
+
+What we have learned:
 
 In this section you'll include a summary of what you have learned about your research question along with statistical arguments supporting your conclusions. In addition, discuss the limitations of your analysis and provide suggestions on ways the analysis could be improved. Any potential issues pertaining to the reliability and validity of your data and appropriateness of the statistical analysis should also be discussed here. Lastly, this section will include ideas for future work.
