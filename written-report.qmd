@@ -486,6 +486,32 @@ pokemon_fit_model123 <- extract_fit_parsnip(pokemon_fit_final)
 glance(pokemon_fit_model123)$r.squared
 ```
 
+```{r}
+pokemon_fit_final <- pokemon_wflow_final |>
+	fit_resamples(folds)
+collect_metrics(pokemon_fit_final) |>
+  kable(digits=3)
+```
+
+```{r}
+pokemon_final_fit_train <- pokemon_wflow_final |>
+  fit(data = pokemon_train)
+
+pokemon_train_pred <- predict(pokemon_final_fit_train, pokemon_train) |>
+  bind_cols(pokemon_train)
+
+rsq(pokemon_train_pred, truth = base_total, estimate = .pred)
+rmse(pokemon_train_pred, truth = base_total, estimate = .pred)
+```
+
+```{r}
+pokemon_test_pred <- predict(pokemon_final_fit_train, pokemon_test) |>
+  bind_cols(pokemon_test)
+
+rsq(pokemon_test_pred, truth = base_total, estimate = .pred)
+rmse(pokemon_test_pred, truth = base_total, estimate = .pred)
+```
+
 We calculated our $R^2$ value for the final model to be 0.6284, meaning 62.84% of the variability in base_total is explained by the predictor variables in our final model.
 
 Overall, for our initial interpretations of our final model, we find it to be a relatively strong predictor for base_total of a Pokemon given the relatively low RMSE value and the relatively high R\^2 value. Thus, we have confirmed our hypothesis that in fact, we *can* predict the base_total of a Pokemon with decent accuracy by using different variables.
