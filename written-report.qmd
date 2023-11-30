@@ -332,7 +332,9 @@ pokemon_wflowV_less <- workflow() |>
 	add_recipe(pokemon_rec_less)
 
 pokemon_fitV_less <- pokemon_wflowV_less |>
-	fit_resamples(folds)
+	fit_resamples(folds) 
+collect_metrics(pokemon_fitV_less) |>
+  kable(digits = 3)
 ```
 
 We notice that the RMSE value from the cross validation of the second model is lower than the RMSE value from the cross validation of the first full model, while the r squared values from both models have negligible difference, leading us to believe that the second model performs better in terms of predicting a pokemon's base stat total.
