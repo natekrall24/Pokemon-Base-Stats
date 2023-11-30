@@ -170,6 +170,8 @@ Note that from this graph we can tell that Legendary Pokemon appear to tend to h
 
 # Methodology:
 
+We are conducting a multiple linear regression model to predict base_total from several other predictor variables. Any form of logistic regression would not make sense in this case as base_total is a quantitative variable, meaning we are not making classifications, and thus MLR is the model we conduct.
+
 ```{r}
 set.seed(123)
 pokemon_split <- initial_split(pokemon)
@@ -204,7 +206,8 @@ pokemon_rec_full <- recipe(base_total ~ ., data = pokemon_train) |> #make name's
               height_m,
               pokedex_number,
               weight_kg,
-              generation)
+              generation) |>
+  step_naomit(height_m)
 ```
 
 Next, we take the training data through a recipe to ready it for our analysis. We took it through the following steps:
@@ -217,9 +220,17 @@ Next, we take the training data through a recipe to ready it for our analysis. W
 
 3.  We remove all against\_\* variables and all type variables.
 
-    -   these two variables convey the same information. Since there are 18 types, including typing as a predictor would convolute the other predictor variables, leaving our model extremely difficult to interpret, so we continue our analysis without considering typing.
+    -   These two variables convey the same information. Since there are 18 types, including typing as a predictor would convolute the other predictor variables, leaving our model extremely difficult to interpret, so we continue our analysis without considering Pokemon typing.
 
 4.  We mean-center all quantitative predictors so our intercept is interpretable.
+
+5.  We address missing data in the height/weight category:
+
+    -   There are 20 Pokemon with missing height and weight values. Per the author of the database, these 20 Pokemon have alternate regional forms where their height and weights differ from their normal form. Additionally, the other data about these Pokemon are based on the alternate form, creating a disparity between these 20 Pokemon and the rest of the Pokemon in the dataset. Thus, we decided to remove these 20 Pokemon from consideration.
+
+6.  Finally, we remove percentage_male from consideration.
+
+    -   Several Pokemon do not have a gender, leading to many missing values in the dataset. Upon further examination, we found that a disproportionate 63/70 of the legendary Pokemon in the dataset to not have a gender, due to the distinct and rare nature of the legendary status in the game, whereas most non-legendary pokemon do have a gender Thus, percentage_male and is_legendary cannot be effective predictors in conjunction, so we decide to remove percentage_male from our model.
 
 ```{r}
 pokemon_spec_full <- linear_reg() |>
@@ -471,20 +482,13 @@ norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
 
 **Normality** - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 so we can relax this condition.
 
-**Independence** - The independence condition is satisfied as we established earlier there is little variation in base total over generations (which is the same as over time). Additionally, Pokemon are created to be inherently balanced so there can be no bias in the data collection as the data of individual Pokemon do not change over time.
+**Independence** - The independence condition is **not** satisfied. We established earlier there is little variation in base total over generations, anaogous to time in Pokemon, ridding the worry for a serial effect. However, due to the evolutionary nature of Pokemon, there is non-independent data in our data set. Most Pokemon evolve from a different pokemon/evolve into a new Pokemon as they gain experience, and these Pokemon among the same evolutionary line are not independent of eachother. For example, Bulbasaur, Ivysaur, and Venusaur are all among the same evolutionary line and they often have the same or similar typing (though we aren't considering this in our model) and generation while often maintaining correlated base stat totals and other information. Thus, our data does not satisfy the independence condition.
 
-**Initial results of our model**
+**Limitations**
 
-```{r}
-sqrt(mean((pokemon_aug$.resid)^2))
-```
+Due to the non-independence of some observations in our dataset, our model will not be as good of a predictor compared to one over completely independent Pokemon as it assumes independent error terms when that is not the case. Instead of manually removing all but one pokemon in the each evolutionary line, we decide to keep the data as is with the non-independent limitation in mind as it better reflects the point of our model. If we decided to alter our data set to make it pass the independence condition, we would be removing more than half of our observations, and we would draw far less relevant conclusions in regards to our research question. We want to see how well different variables can predict the base stat total of *any given pokemon*, not just the pokemon at the top of their evolutionary chain. Thus, we accept that the lack of independence negatively affects the model, but we carry on with conclusions and results as is.
 
-We calculated our RMSE for the final model to be 72.81 base total points, meaning the average base total is 72.81 base total points away from the predicted value of base total points.
-
-```{r}
-pokemon_fit_model123 <- extract_fit_parsnip(pokemon_fit_final)
-glance(pokemon_fit_model123)$r.squared
-```
+**Results**
 
 ```{r}
 pokemon_fit_final <- pokemon_wflow_final |>
