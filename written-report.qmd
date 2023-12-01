@@ -413,7 +413,7 @@ pokemon_fit_final <- pokemon_wflow_final |>
 #getting VIF numbers. Only worry about multicolinearity if VIFS are greater than 10
 pokemon_fitless <- extract_fit_parsnip(pokemon_fit_final)
 vif(pokemon_fitless$fit) |>
-  tidy(kable(digits = 3))
+  kable(digits =3)
 ```
 
 As we can see, the VIF values are all now satisfactorily low for the final model, which we will display below:
@@ -430,8 +430,6 @@ $$
 $$
 
 # Results:
-
-We first check the Model Conditions
 
 **Model Conditions: Linearity / Constant Variance / Normality**
 
@@ -472,7 +470,7 @@ norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
 
 **Normality** - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 so we can relax this condition.
 
-**Independence** - The independence condition is **not** satisfied. We established earlier there is little variation in base total over generations, analogous to time in Pokemon, ridding the worry for a serial effect. However, due to the evolutionary nature of Pokemon, there is non-independent data in our data set. Most Pokemon evolve from a different pokemon/evolve into a new Pokemon as they gain experience, and these Pokemon among the same evolutionary line are not independent of eachother. For example, Bulbasaur, Ivysaur, and Venusaur are all among the same evolutionary line and they often have the same or similar typing (though we aren't considering this in our model) and generation while often maintaining correlated base stat totals and other information. Thus, our data does not satisfy the independence condition.
+**Independence** - The independence condition is **not** satisfied. We established earlier there is little variation in base total over generations, analogous to time in Pokemon, ridding the worry for a serial effect. However, due to the evolutionary nature of Pokemon, there is non-independent data in our data set. Most Pokemon evolve from a different pokemon/evolve into a new Pokemon as they gain experience, and these Pokemon among the same evolutionary line are not independent of each other. For example, Bulbasaur, Ivysaur, and Venusaur are all among the same evolutionary line and they often have the same or similar typing and generation while often maintaining correlated base stat totals and other information. Thus, our data does not satisfy the independence condition.
 
 **Limitations**
 
@@ -528,12 +526,12 @@ Our research aimed to predict a Pokémon's base stat total. Our analysis reveale
 
 **Limitations and Improvement Suggestions**
 
-The dataset which was drawn from 2017 does not include pokémon in games released after this date. This means that this model should not be extrapolated past this date as the Pokemon games evolve over time and might affect our applicability of these results to future editions. Additionally, as we talked more in detail about in the previous section, the independence condition being violated limits the predictive power of this model, as evolution chains are not including in our model. While we removed variables like base_egg_steps and base_happiness due to their high p-values, further exploration could determine if any interaction effects or non-linear relationships exist that we might have overlooked.
+The dataset was drawn in 2017 does not include pokémon in games released after this date. This means that this model should not be extrapolated past this date as the Pokemon games evolve over time and might affect our applicability of these results to future editions. Additionally, as we talked more in detail about in the previous section, the independence condition being violated limits the predictive power of this model, as evolution chains are not including in our model. While we removed variables like base_egg_steps and base_happiness due to their high p-values, further exploration could determine if any interaction effects or non-linear relationships exist that we might have overlooked.
 
 **Reliability and Validity Concerns**
 
-The linear regression model assumes linearity, independence, homoscedasticity, and normality of residuals, which we proved held for our dataset. Even though our model satisfied these conditions, any violation in future datasets of future Pokemon games could make the model unreliable. Additionally, the data was scraped from a fan-run website, there might be biases or errors in how the information was recorded, affecting the validity of our model.
+The linear regression model assumes linearity, independence, homoscedasticity, and normality of residuals, which we proved held for our dataset. Even though our model satisfied these conditions, any violation in future datasets of future Pokemon games could make the model unreliable. Additionally, the data was scraped from a fan-run website, there might be biases or errors in how the information was recorded, affecting the validity.
 
 **Future Work**
 
-To continue our research in the future, we could could include data from newer Pokémon games to keep our model relevant over time. Additionally, analyzing how a Pokémon's evoluntionary stage affects its Base Stat Total could be very interesting, especially due to the great variance in Pokemon evolutions. For examples, the starter pokémon are generally pretty strong compared to other pokémon their level at all staged in their evolution. On the other hand, Magicarp is possibly the weakest pokémon in the game, but evolves to become Gyrados, one of the strongest pokémon in the game. Additionally, we could have more investigation into the interactive effects between variables, like how the combination of type and legendary status impacts base stats, could provide a deeper understanding of the underlying dynamics.
+To continue our research in the future, we could could include data from newer Pokémon games to keep our model relevant over time. Additionally, analyzing how a Pokémon's evolutionary stage affects its Base Stat Total could be very interesting, especially due to the great variance in Pokemon evolution. For examples, the starter pokémon are generally pretty strong compared to other pokémon their level at all stages in their evolution. On the other hand, Magicarp is possibly the weakest pokémon in the game, but evolves to become Gyrados, one of the strongest pokémon in the game. Additionally, we could have more investigation into the interactive effects between variables, like how the combination of type and legendary status impacts base stats, could provide a deeper understanding of the underlying dynamics.
