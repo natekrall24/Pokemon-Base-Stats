@@ -33,7 +33,9 @@ A deeper look into the numbers in the game of Pokemon shows a game filled relati
 
 For our analysis, we will be focusing on these specific variables:
 
-**RESPONSE VARIABLE =** base_total: total base stats of the Pokemon \[whole number\]
+**RESPONSE VARIABLE**
+
+-   base_total: total base stats of the Pokemon \[whole number\]
 
 **PREDICTOR VARIABLES**
 
@@ -64,6 +66,8 @@ For our analysis, we will be focusing on these specific variables:
 -   is_legendary: Denotes if the Pokemon is legendary.\[0 = not legendary, 1 = legendary\]
 
 The dataset splits the base stats of each pokémon into the individual stats, but we only need to know about the base_total. Some variables like is_legendary, may prove to be extremely important in our regression model, while others that are simply identifiers, like name and Japanese name, can be removed.
+
+**Exploratory Data Analysis**
 
 ```{r expdata1, warning = F, echo = F}
 p1 <- ggplot(pokemon, aes(x = base_total)) +
