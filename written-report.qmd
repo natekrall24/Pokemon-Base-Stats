@@ -19,6 +19,8 @@ library(dplyr)
 library(patchwork)
 library(knitr)
 library(rms)
+library(kableExtra)
+
 
 pokemon <- read.csv("data/pokemon.csv")
 pokemon <- pokemon[-774, ]
@@ -478,29 +480,35 @@ collect_metrics(pokemon_fit_final) |>
 
 Here are the RMSE and $R^2$ given from the training set:
 
-```{r}
+```{r, results='asis', echo=FALSE}
 pokemon_final_fit_train <- pokemon_wflow_final |>
   fit(data = pokemon_train)
 
 pokemon_train_pred <- predict(pokemon_final_fit_train, pokemon_train) |>
   bind_cols(pokemon_train)
 
-rsq(pokemon_train_pred, truth = base_total, estimate = .pred)|>
-  kable(digits = 3)
-rmse(pokemon_train_pred, truth = base_total, estimate = .pred)|>
-  kable(digits = 3)
+rsq_valueTrain <- rsq(pokemon_train_pred, truth = base_total, estimate = .pred)
+rmse_valueTrain <- rmse(pokemon_train_pred, truth = base_total, estimate = .pred)
+
+# Combine tables side by side
+knitr::kable(
+  cbind(rsq_valueTrain, rmse_valueTrain),
+  digits = 3)
 ```
 
 Here are the RMSE and $R^2$ given from the test set:
 
-```{r}
+```{r, results='asis', echo=FALSE}
 pokemon_test_pred <- predict(pokemon_final_fit_train, pokemon_test) |>
   bind_cols(pokemon_test)
 
-rsq(pokemon_test_pred, truth = base_total, estimate = .pred) |>
-  kable(digits = 3)
-rmse(pokemon_test_pred, truth = base_total, estimate = .pred) |>
-  kable(digits = 3)
+rsq_valueTest <- rsq(pokemon_test_pred, truth = base_total, estimate = .pred) 
+rmse_valueTest <- rmse(pokemon_test_pred, truth = base_total, estimate = .pred) 
+
+# Combine tables side by side
+knitr::kable(
+  cbind(rsq_valueTest, rmse_valueTest),
+  digits = 3)
 ```
 
 When we compare the $R^2$ values, that of the training model was .641 while the testing model had a $R^2$ value of .577. This is to be expected since the training data has been trained on so it should be a better predictor than the testing model. When we compare the RMSE for the training and testing data, we can see that the RMSE for the training set was 71.1 while the RMSE of the testing set was 80.69. Since lower RMSE values indicate a better fit to the model and we can see that the RMSE of the testing set was greater than that of the training set which means the training data once again is a better predictor and this is once again to be expected since training data was trained on so it should predict the model better. Since the difference in the $R^2$ and the RMSE values between the training and the testing data wasn't too significant, this shows that our model doesn't over fit the data.
