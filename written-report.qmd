@@ -27,11 +27,9 @@ pokemon$capture_rate <- as.integer(pokemon$capture_rate)
 
 # Introduction and Data:
 
-A deeper look into the numbers in the game of Pokemon shows a game filled relationships among several characteristics of the pokemon. Each creature has its own specific set of base statistics, colloquially referred to as "base stats," including attack, special attack, defense, special defense, and speed, which indicate that pokémon's battle prowess. Summing these stats yields a pokémon's total base stats, which is the best measure of a pokémon's overall strength when all pokémon are put at an even playing field -- common knowledge for any pokémon fan. We are interested in measuring a pokémon's strength without using base stats as predictors, giving us insight on how strong the relationships among pokémon's different characteristics actually are. Thus, we are looking to answer the following research question: **Can we predict a Pokémon's Base Stat Total from other variables?** In other words, we are analyzing how well variables such as the pokémon's type, capture rate, growth rate, generation, height, weight, base happiness, weaknesses, and if the pokémon is legendary or not can predict a pokémon's total base stats. We hypothesize that a multiple linear regression model including some formation of these predictor variables will be a somewhat strong predictor for base_total -- thinking about the game, stronger pokémon would seem to have certain values for these predictor variables when compared to weaker ones: for example, legendary pokémon tend to be stronger in battle than non legendary pokémon, so we might expect is_legendary to be a useful predictor for base_total, for example.
+A deeper look into the numbers in the game of Pokemon shows a game filled relationships among several characteristics of the pokemon. Each creature has its own specific set of base statistics, colloquially referred to as "base stats," including attack, special attack, defense, special defense, and speed, which indicate that pokémon's battle prowess. Summing these stats yields a pokémon's total base stats, the best measure of a pokémon's overall strength -- common knowledge for any pokémon fan. We are interested in measuring a pokémon's strength without using base stats as predictors, giving us insight on how strong the relationships among pokémon's different characteristics actually are. Thus, we are looking to answer the following research question: **Can we predict a Pokémon's Base Stat Total from other variables?** In other words, we are analyzing how well variables such as the pokémon's type, capture rate, growth rate, generation, height, weight, base happiness, weaknesses, and if the pokémon is legendary or not can predict a pokémon's total base stats. We hypothesize that a multiple linear regression model including some formation of these predictor variables will be a somewhat strong predictor for base_total -- thinking about the game, stronger pokémon would seem to have certain values for these predictor variables when compared to weaker ones: for example, legendary pokémon tend to be stronger in battle than non legendary pokémon, so we might expect is_legendary to be a useful predictor for base_total. We retrieved the dataset from kaggle.com, a large data science online community, and the dataset is called ["The Complete Pokemon Dataset"](https://labs-az-08.oit.duke.edu:30269/#0) created by Rounak Banik in 2017. The dataset was retrieved via web scraper from the website serebii.net. Since it was formed in 2017, the dataset does not include pokémon from more recent games, but still includes 801 pokémon, meaning the dataset has 801 observations. However, note that we removed one pokémon from the original 801 pokémon, Minior, from the dataset, since it has 2 different forms and has an uninterpretable capture rate. We noticed that while reading the .csv file, R automatically translated the \*capture_rate\* variable to characters because Minior's capture rate was listed as: "30 (Meteorite)255 (Core)". We decided to exclude this observation from the model because of its uninterpretable characteristics, and after, we casted \*capture_rate\* an integer instead of a character. The dataset contains 23 variables, explanations of which can be viewed in our [data dictionary](./data/README.md).
 
-We retrieved the dataset from kaggle.com, a large data science online community, and the dataset is called ["The Complete Pokemon Dataset"](https://labs-az-08.oit.duke.edu:30269/#0) created by Rounak Banik in 2017. The dataset was retrieved via web scraper from the website serebii.net. Since it was formed in 2017, the dataset does not include pokémon from more recent games, but still includes a whopping 801 pokémon, meaning the dataset has 801 observations, one for each pokémon. However, note that we removed one pokémon from the original 801 pokémon, Minior, from the dataset, since it has 2 different forms and has an uninterpretable capture rate. We noticed that while reading the .csv file, R automatically translated the \*capture_rate\* variable to characters because Minior's capture rate was listed as: "30 (Meteorite)255 (Core)". We decided to exclude this observation from the model because of its uninterpretable characteristics, and after, we casted \*capture_rate\* an integer instead of a character.
-
-The dataset contains 23 variables, taken directly from the kaggle website for the dataset, explanations of which can be viewed in our [data dictionary](./data/README.md). For our analysis, we will be focusing on these specific variables:
+For our analysis, we will be focusing on these specific variables:
 
 **RESPONSE VARIABLE =** base_total: total base stats of the Pokemon \[whole number\]
 
@@ -51,9 +49,9 @@ The dataset contains 23 variables, taken directly from the kaggle website for th
 
 -   height_m: Height of the Pokemon \[number in meters\]
 
--   percentage_male: The percentage of the species that are male. \[percentage value, blank if the Pokemon is genderless\]
+-   percentage_male: The percentage of the species that are male. \[percent, blank if no gender\]
 
--   pokedex_number: The entry number of the Pokemon in the National Pokedex \[whole number between 1 and 801\]
+-   pokedex_number: Entry number of the Pokemon in the National Pokedex \[number between 1 and 801\]
 
 -   type1: The Primary Type of the Pokemon (every pokémon has this)
 
@@ -63,7 +61,7 @@ The dataset contains 23 variables, taken directly from the kaggle website for th
 
 -   is_legendary: Denotes if the Pokemon is legendary.\[0 = not legendary, 1 = legendary\]
 
-As you'll notice, the dataset splits the base stats of each pokémon into the individual stats, but we only need to know about the base_total variable, Variables like is_legendary, may prove to be extremely important in our regression model, while with others, like name and Japanese name, we can remove them since they are simply unique identifiers.
+The dataset splits the base stats of each pokémon into the individual stats, but we only need to know about the base_total. Some variables like is_legendary, may prove to be extremely important in our regression model, while others that are simply identifiers, like name and Japanese name, can be removed.
 
 ```{r expdata1, warning = F, echo = F}
 p1 <- ggplot(pokemon, aes(x = base_total)) +
@@ -153,15 +151,13 @@ tidy(summary(pokemon$base_total)) |>
   kable(digits=3)
 ```
 
-**p1: Distribution of Base total:** We can see from the distribution of the base total, that is seems to be roughly trimodal with three peaks (one around 300, 400, and 475). The base total points vary from about 180 to 780 with a mean at around 428.4. The median is 435 which is higher than the mean by a little bit which could mean that there are more extreme low base total Pokemon bringing the mean down a little bit. The IQR is 185 (505 - 320) and looking at the data there might be a potential outlier around 780 base total.
+**p1: Distribution of Base total:** We can see from the distribution of the base total, that is seems to be roughly trimodal with three peaks (one around 300, 400, and 475). The base total points vary from about 180 to 780 with a mean at around 428.4. The median is 435 which is higher than the mean by a little bit which could mean that there are more extreme low base total Pokemon bringing the mean down a little bit. The IQR is 185 (505 - 320) and looking at the data there is an outlier around 780 base total.
 
 **p2: Mean Base Total Across Generations:** This is the graph showing the relationship between different generation Pokemon and their mean base total. We can see from this graph that the mean base total of generation 4 Pokemon were the highest but overall we can't see any distinct relationships between the generation of the Pokemon and their mean base total. One can maybe say there could be a very slight positive linear relationship between the generation of the Pokemon and their mean base total as we observe that as generation increases the mean base total tends to increase slightly.
 
 **p3: Scatter Plot of Base Total vs Weight:** From the scatter plot I can see that there is no apparent correlation between the weight and the base total. There may be a very low positive correlation between these two variables but most of the points are focused around when the weight of the Pokemon is less than 100kg so it's hard to tell the relationship. There seems to be a few outliers near 900-1000kg.
 
-**p4: Interaction Between Weight and Legendary Status:** This graph is showing the relationship between the weight of the Pokemon and the base total for legendary and non legendary Pokemon. The red line is for non legendary Pokemons (is_legendary = 0) and the blue line is for legendary Pokemon (is_legendary = 1). Something interesting we can note is that legendary Pokemon all tend to have a much higher and consistent base total for all weights. Across all weights most base total for legendary Pokemons stay between 550- 700. Among the legendary Pokemon there doesn't seem to be any correlation between the weight and the base total. Among the non-legendary Pokemon however, there seems to be a very slight positive correlation, as the weight of the non-legendary Pokemon goes up, the Base total seems to go up slightly although with the cluster of points under 100 kg Pokemon, it is hard to conclude.
-
-Note that from this graph we can tell that Legendary Pokemon appear to tend to have much higher base stat totals than non-legendary Pokemon on average, which is something that will definitely impact our multiple linear regression model.
+**p4: Interaction Between Weight and Legendary Status:** This graph is showing the relationship between the weight of the Pokemon and the base total for legendary and non legendary Pokemon. The red line is for non legendary Pokemons (is_legendary = 0) and the blue line is for legendary Pokemon (is_legendary = 1). Something interesting we can note is that legendary Pokemon all tend to have a much higher and consistent base total for all weights. Across all weights most base total for legendary Pokemons stay between 550- 700. Among the legendary Pokemon there doesn't seem to be any correlation between the weight and the base total. Among the non-legendary Pokemon however, there seems to be a very slight positive correlation, as the weight of the non-legendary Pokemon goes up, the Base total seems to go up slightly although with the cluster of points under 100 kg Pokemon, it is hard to conclude. We can tell that Legendary Pokemon have much higher base stat totals than non-legendary Pokemon on average, which is something that will definitely impact our multiple linear regression model.
 
 # Methodology:
 
@@ -174,7 +170,7 @@ pokemon_train <- training(pokemon_split)
 pokemon_test <- testing(pokemon_split)
 ```
 
-We first randomly split our data of 800 different pokémon into 75% training and 25% testing data so we can both train and evaluate our model.
+We randomly split our data into 75% training and 25% testing data to both train and evaluate our model.
 
 ```{r}
 pokemon_rec_full <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
@@ -288,7 +284,7 @@ pokemon_wflow_less <- workflow() |>
   add_recipe(pokemon_rec_less)
 ```
 
-We run the training data through a very similar recipe for the second model except that base_egg_steps, base_happiness, and weight_kg are removed. The output of running multiple linear regression for this model is shown below:
+We create a similar recipe for the second model except that base_egg_steps, base_happiness, and weight_kg are removed. The output of running multiple linear regression for this model is shown below:
 
 ```{r}
 pokemon_fit_less <- pokemon_wflow_less |>
@@ -310,7 +306,7 @@ glance(pokemon_fit_less) |>
   kable(digits = 3)
 ```
 
-From this test, we note that both AIC and BIC are lower for the second, reduced model than the first model. The adjusted r squared values are very similar in size. With this information, it would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted r squared value. However, we run one more test, v-fold cross validation, to compare the models once again to have another point of evidence to base our decision off of. The results of this second test are below:
+From this test, we note that both AIC and BIC are lower for the second, reduced model than the first model. The adjusted r squared values are very similar in size. With this information, it would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted r squared value. However, we run one more test, v-fold cross validation, to compare the models once again to have another point of evidence. The results of this second test are below:
 
 Cross validation results for the 1st, full model:
 
@@ -466,8 +462,6 @@ norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
 **Normality** - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 so we can relax this condition.
 
 **Independence** - The independence condition is **not** satisfied. We established earlier there is little variation in base total over generations, analogous to time in Pokemon, ridding the worry for a serial effect. However, due to the evolutionary nature of Pokemon, there is non-independent data in our data set. Most Pokemon evolve from a different pokemon/evolve into a new Pokemon as they gain experience, and these Pokemon among the same evolutionary line are not independent of each other. For example, Bulbasaur, Ivysaur, and Venusaur are all among the same evolutionary line and they often have the same or similar typing and generation while often maintaining correlated base stat totals and other information. Thus, our data does not satisfy the independence condition.
-
-**Limitations**
 
 Due to the non-independence of some observations in our dataset, our model will not be as good of a predictor compared to one over completely independent Pokemon as it assumes independent error terms when that is not the case. Instead of manually removing all but one pokémon in the each evolutionary line, we decide to keep the data as is with the non-independent limitation in mind as it better reflects the point of our model. If we decided to alter our data set to make it pass the independence condition, we would be removing more than half of our observations, and we would draw far less relevant conclusions in regards to our research question. We want to see how well different variables can predict the base stat total of *any given pokémon*, not just the pokémon at the top of their evolutionary chain. Thus, we accept that the lack of independence negatively affects the model, but we carry on with conclusions and results as is.
 
