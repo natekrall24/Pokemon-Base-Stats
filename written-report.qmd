@@ -47,8 +47,6 @@ For our analysis, we will be focusing on these specific variables:
 
 -   capture_rate: Capture Rate of the Pokemon \[whole number\]
 
--   experience_growth: The Experience Growth of the Pokemon \[whole number\]
-
 -   generation: The numbered generation which the Pokemon was first introduced \[whole number 1-7\]
 
 -   height_m: Height of the Pokemon \[number in meters\]
@@ -73,7 +71,7 @@ The dataset splits the base stats of each pokémon into the individual stats, bu
 p1 <- ggplot(pokemon, aes(x = base_total)) +
   geom_histogram(binwidth = 10, fill = "blue", color = "black") +
   geom_vline(xintercept = mean(pokemon$base_total), color = "red", size = 1) +
-  labs(title = "Distribution of Base Total", x = "Base Total")
+  labs(title = "Distr. of Base Total", x = "Base Total")
 ```
 
 ```{r expdata3, warning = F, echo = F}
@@ -93,7 +91,7 @@ p3 <- ggplot(generation_means, aes(x = as.factor(generation), y = mean_base_tota
 p4 <- ggplot(pokemon, aes(x = weight_kg, y = base_total)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE, col = "blue") +
-  labs(title = "Scatter Plot of Base Total vs. Weight", x = "Weight (kg)", y = "Base Total")
+  labs(title = "Base Total vs. Weight", x = "Weight (kg)", y = "Base Total")
 ```
 
 ```{r expdata6, warning = F, echo = F}
@@ -101,7 +99,7 @@ pokemon$is_legendary <- as.factor(pokemon$is_legendary)
 p6 <- ggplot(pokemon, aes(x = weight_kg, y = base_total, color = is_legendary)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "Interaction Between Weight and Legendary Status", x = "Weight (kg)", y = "Base Total")
+  labs(title = "Weight and Legendary Status Interaction", x = "Weight (kg)", y = "Base Total")
 ```
 
 ```{r plots, message = F, warning = F, echo = F}
@@ -300,7 +298,7 @@ tidy(pokemon_fit_less) |>
   kable(digits = 3)
 ```
 
-We then conducted two tests to decipher which model is best to select and use for our final model: 1 comparing the AIC, BIC, and adjusted r squared for the models, and another comparing the results of V-fold cross validation for the two models. The output for the first test is shown below:
+We then conducted two tests to decipher which model is best to select and use for our final model: 1 comparing the AIC, BIC, and adjusted $R^2$ for the models, and another comparing the results of V-fold cross validation for the two models. The output for the first test is shown below:
 
 ```{r}
 glance(pokemon_fit_full) |> 
@@ -312,7 +310,7 @@ glance(pokemon_fit_less) |>
   kable(digits = 3)
 ```
 
-From this test, we note that both AIC and BIC are lower for the second, reduced model than the first model. The adjusted r squared values are very similar in size. With this information, it would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted r squared value. However, we run one more test, v-fold cross validation, to compare the models once again to have another point of evidence. The results of this second test are below:
+From this test, we note that both AIC and BIC are lower for the second, reduced model than the first model. The adjusted $R^2$ values are very similar in size. With this information, it would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted $R^2$ value. However, we run one more test, v-fold cross validation, to compare the models once again to have another point of evidence. The results of this second test are below:
 
 Cross validation results for the 1st, full model:
 
@@ -437,26 +435,32 @@ pokemon_aug <- augment(pokemon_fit_model123$fit)
 p1 <- ggplot(data = pokemon_aug, aes(x = capture_rate, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Capture Rate", y = "Residuals", title = "Residuals vs Capture Rate")
+  labs(x = "Capture Rate", y = "Residuals", title = "Residuals vs Capture Rate") +
+  theme(plot.title = element_text(size = 11))
 p2 <- ggplot(data = pokemon_aug, aes(x = experience_growth, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Experience Growth", y = "Residuals", title = "Residuals vs Experience Growth")
+  labs(x = "Experience Growth", y = "Residuals", title = "Residuals vs Exp. Growth") +
+  theme(plot.title = element_text(size = 11))
 p3 <- ggplot(data = pokemon_aug, aes(x = height_m, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Height (m)", y = "Residuals", title = "Residuals vs Height(m)")
+  labs(x = "Height (m)", y = "Residuals", title = "Residuals vs Height(m)") +
+  theme(plot.title = element_text(size = 11))
 p4 <- ggplot(data = pokemon_aug, aes(x = pokedex_number, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Pokedex Number", y = "Residuals", title = "Residuals vs Pokedex Number")
+  labs(x = "Pokedex Number", y = "Residuals", title = "Residuals vs Pokedex Num.") +
+  theme(plot.title = element_text(size = 11))
 p5 <- ggplot(data = pokemon_aug, aes(x = is_legendary, y = .resid)) +
 	geom_point() +
 	geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "is Legendary", y = "Residuals", title = "Residuals vs is_Legendary")
+  labs(x = "is Legendary", y = "Residuals", title = "Residuals vs is_Legendary") +
+  theme(plot.title = element_text(size = 11))
 norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
   geom_histogram() + 
-  labs(title = "Distribution of residuals")
+  labs(title = "Distribution of residuals") +
+  theme(plot.title = element_text(size = 11))
 (p1 + p2) / (p3 + p4) / (p5 + norm)
 
 ```
