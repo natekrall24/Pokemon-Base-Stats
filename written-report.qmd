@@ -29,35 +29,35 @@ pokemon$capture_rate <- as.integer(pokemon$capture_rate)
 
 ## Introduction and Data:
 
-A deeper look into the numbers in the games of Pokémon shows a game filled with relationships among several characteristics of the pokémon. We aimed to investigate these relationships in their connection to a pokémon's strength. Thinking about the game, each creature has its own specific set of base statistics, colloquially referred to as "base stats," including attack, special attack, defense, special defense, and speed, which indicate that pokémon's battle prowess. Summing these stats yields a pokémon's total base stats, the best measure of a pokémon's overall strength -- common knowledge for any pokémon fan. We are looking to answer the following research question: **Can we predict a Pokémon's Base Stat Total from other variables?** We are analyzing how well variables such as the pokémon's type, capture rate, growth rate, generation, height, weight, base happiness, and others can predict a pokémon's total base stats. We hypothesize that a multiple linear regression model will be a somewhat strong predictor for base_total -- thinking about the game, stronger pokémon would seem to have certain values for these predictor variables when compared to weaker ones: for example, legendary pokémon tend to be stronger in battle than non legendary pokémon, so we might expect is_legendary to be a useful predictor for base_total. We retrieved the dataset from kaggle.com, a large data science online community, and the dataset is called ["The Complete Pokemon Dataset"](https://labs-az-08.oit.duke.edu:30269/#0) created by Rounak Banik in 2017. The dataset was retrieved via web scraper from the website serebii.net. Since it was formed in 2017, the dataset does not include pokémon from recent games, but still includes 801 pokémon, meaning the dataset has 801 observations. However, note that we removed one pokémon from the original 801 pokémon, Minior, from the dataset, since it has 2 different forms and has an uninterpretable capture rate. Minior's capture rate is: "30 (Meteorite)255 (Core)", causing capture rates to be characters. We decided to exclude this observation from the model due to its uninterpretable characteristics, and after, we casted \*capture_rate\* to be an integer. The dataset contains 23 variables, explanations of which can be viewed in our [data dictionary](./data/README.md). We will focus on these variables:
+A deeper look into the numbers in the games of Pokémon shows a game filled with relationships among several characteristics of the Pokémon. We aimed to investigate these relationships in their connection to a Pokémon's strength. Thinking about the game, each creature has its own specific set of base statistics, colloquially referred to as "base stats," including attack, special attack, defense, special defense, and speed, which indicate that Pokémon's battle prowess. Summing these stats yields a Pokémon's total base stats, the best measure of a Pokémon's overall strength -- common knowledge for any Pokémon fan. We are looking to answer the following research question: **Can we predict a Pokémon's Base Stat Total from other variables?** We are analyzing how well variables such as the Pokémon's type, capture rate, growth rate, generation, height, weight, base happiness, and others can predict a Pokémon's total base stats. We hypothesize that a multiple linear regression model will be a somewhat strong predictor for base_total -- thinking about the game, stronger Pokémon would seem to have certain values for these predictor variables when compared to weaker ones: for example, legendary Pokémon tend to be stronger in battle than non legendary Pokémon, so we might expect is_legendary to be a useful predictor for base_total. We retrieved the dataset from kaggle.com, a large data science online community, and the dataset is called ["The Complete Pokémon Dataset"](https://labs-az-08.oit.duke.edu:30269/#0) created by Rounak Banik in 2017. The dataset was retrieved via web scraper from the website serebii.net. Since it was formed in 2017, the dataset does not include Pokémon from recent games, but still includes 801 Pokémon, meaning the dataset has 801 observations. However, note that we removed one Pokémon from the original 801 Pokémon, Minior, from the dataset, since it has 2 different forms and has an uninterpretable capture rate. Minior's capture rate is: "30 (Meteorite)255 (Core)", which was recorded in the csv file as characters. We decided to exclude this observation from the model due to its uninterpretable characteristics. The dataset contains 23 variables, explanations of which can be viewed in our [data dictionary](./data/README.md). We will focus on these variables:
 
-**RESPONSE VARIABLE:** [base_total]{.underline}: total base stats of the Pokemon \[whole number\]
+**RESPONSE VARIABLE:** [base_total]{.underline}: total base stats of the Pokémon \[whole number\]
 
 **PREDICTOR VARIABLES**
 
--   experience_growth: The Experience Growth of the Pokemon \[whole number\]
+-   experience_growth: The Experience Growth of the Pokémon \[whole number\]
 
--   base_egg_steps: \# of steps required to hatch an egg of the Pokemon \[whole number\]
+-   base_egg_steps: \# of steps required to hatch an egg of the Pokémon \[whole number\]
 
--   base_happiness: Base Happiness of the Pokemon \[whole number\]
+-   base_happiness: Base Happiness of the Pokémon \[whole number\]
 
--   capture_rate: Capture Rate of the Pokemon \[whole number\]
+-   capture_rate: Capture Rate of the Pokémon \[whole number\]
 
--   generation: The generation which the Pokemon was introduced \[whole number 1-7\]
+-   generation: The generation which the Pokémon was introduced \[whole number 1-7\]
 
--   height_m: Height of the Pokemon \[number in meters\]
+-   height_m: Height of the Pokémon \[number in meters\]
 
 -   percentage_male: % of the species that are male \[percent, blank if no gender\]
 
--   pokedex_number: Entry \# of the Pokemon in the Pokedex \[between 1-801\]
+-   pokedex_number: Entry \# of the Pokémon in the Pokedex \[between 1-801\]
 
--   type1, type2: The Primary Type and Second Type of the Pokemon, respectively
+-   type1, type2: The Primary Type and Second Type of the Pokémon, respectively
 
--   weight_kg: The Weight of the Pokemon \[number in kilograms\]
+-   weight_kg: The Weight of the Pokémon \[number in kilograms\]
 
--   is_legendary: Denotes if the Pokemon is legendary.\[0 = not legendary, 1 = legendary\]
+-   is_legendary: Denotes if the Pokémon is legendary.\[0 = not legendary, 1 = legendary\]
 
-The dataset splits the base stats of each pokémon into the individual stats, but we only need to know about the base_total. Some variables like is_legendary, may prove to be extremely important in our regression model, while others that are simply identifiers can be removed.
+The dataset splits the base stats of each Pokémon into the individual stats, but we only need to know about the base_total. Some variables like is_legendary, may prove to be extremely important in our regression model, while others that are simply identifiers can be removed.
 
 **Exploratory Data Analysis**
 
@@ -151,7 +151,7 @@ tidy(summary(pokemon$base_total)) |>
 
 **p1: Distribution of Base total:** The distribution of the base total seems to be roughly trimodal with three peaks (one around 300, 400, and 475). The base total points vary from about 180 to 780. Since there is an outlier around 780 base total, we use the median of 435 to describe the center of the data. The IQR is 185 (505 - 320).
 
-**p2: Mean Base Total Across Generations:** This is the graph showing the relationship between different generation Pokemon and mean base total. The mean base total of generation 4 Pokemon were the highest. There is a slight positive linear relationship between the generation of the Pokemon and their mean base total.
+**p2: Mean Base Total Across Generations:** This is the graph showing the relationship between different generation Pokémon and mean base total. The mean base total of generation 4 Pokémon were the highest. There is a slight positive linear relationship between the generation of the Pokémon and their mean base total.
 
 **p3: Scatter Plot of Base Total vs Weight:** From the scatter plot we can see that there is no apparent correlation between the weight and the base total. There seems to be a few outliers near 900-1000kg.
 
@@ -205,7 +205,7 @@ Next, we take the training data through a recipe to ready it for our analysis.
 
 2.  We remove irrelevant, non-predicting information like abilities, classification, and Japanese name.
 
-    -   There are hundreds of different abilities a Pokemon can have, and very little overlap of abilities between Pokemon, so we do not need the abilities variable. The classification of a Pokemon is almost unique for every Pokemon (there is very little overlap), and it mainly just groups Pokemon by their evolution line, yielding classification unwanted.
+    -   There are hundreds of different abilities a Pokémon can have, and very little overlap of abilities between Pokémon, so we do not need the abilities variable. The classification of a Pokémon is almost unique for every Pokémon (there is very little overlap), and it mainly just groups Pokémon by their evolution line, yielding classification unwanted.
 
 3.  We remove all against\_\* variables and all type variables, as these variables convey the same info.
 
@@ -213,13 +213,13 @@ Next, we take the training data through a recipe to ready it for our analysis.
 
 5.  We address missing data in the height/weight category:
 
-    -   There are 20 Pokemon with missing height and weight values. Per the author of the database, these 20 Pokemon have alternate regional forms where their height and weights differ from their normal form, creating a disparity between these 20 Pokemon and the rest of the Pokemon in the dataset. Thus, we decided to remove these 20 Pokemon from consideration.
+    -   There are 20 Pokémon with missing height and weight values. Per the author of the database, these 20 Pokémon have alternate regional forms where their height and weights differ from their normal form, creating a disparity between these 20 Pokémon and the rest of the Pokémon in the dataset. Thus, we decided to remove these 20 Pokémon from consideration.
 
 6.  Finally, we remove percentage_male from consideration.
 
-    -   Several Pokemon do not have a gender, leading to many missing values in the dataset. Upon further examination, we found that a disproportionate 63/70 of the legendary Pokemon in the dataset to not have a gender, whereas most non-legendary pokémon do have a gender. Percentage_male and is_legendary cannot be effective predictors in conjunction, so we decide to remove percentage_male from our model.
+    -   Several Pokémon do not have a gender, leading to many missing values in the dataset. Upon further examination, we found that a disproportionate 63/70 of the legendary Pokémon in the dataset to not have a gender, whereas most non-legendary Pokémon do have a gender. Percentage_male and is_legendary cannot be effective predictors in conjunction, so we decide to remove percentage_male from our model.
 
-Note that pokédex number is in fact a unique identifier for a pokémon, yet it also contains information on when the pokémon was released in-game, as larger pokédex numbers correspond to later releases, which may have a tie to base_total. Also, generation may seem as if it is an arbitrary label, but it also corresponds to when a pokémon was released in a different manner than pokédex number. We are wary of the potential of collinearity among these variables and will analyze the substantiallity of their collinearity (as well as all other potential predictors) in our analysis.
+Note that pokédex number is in fact a unique identifier for a Pokémon, yet it also contains information on when the Pokémon was released in-game, as larger pokédex numbers correspond to later releases, which may have a tie to base_total. Also, generation may seem as if it is an arbitrary label, but it also corresponds to when a Pokémon was released in a different manner than pokédex number. We are wary of the potential of collinearity among these variables and will analyze the substantiallity of their collinearity (as well as all other potential predictors) in our analysis.
 
 ```{r}
 pokemon_spec_full <- linear_reg() |>
@@ -240,7 +240,7 @@ tidy(pokemon_fit_full) |>
   kable(digits = 3)
 ```
 
-Base_egg_steps, base_happiness, and weight_kg are three candidates for variables to remove from the model, since we notice their p-values are all \> .05, meaning they are potentially statistically insignificant predictors. The next step in our method is compare two models through a series of tests: the one model being our original model with all predictors after running our feature engineering, and one with those varibale removed to select a model that strikes a balance between conciseness and detail, or select the most comprehensive one available.
+Base_egg_steps, base_happiness, and weight_kg are three candidates for variables to remove from the model, since we notice their p-values are all \> .05, meaning they are potentially statistically insignificant predictors. The next step in our method is compare two models through a series of tests: the one model being our original model with all predictors after running our feature engineering, and one with those variabke removed to select a model that strikes a balance between conciseness and detail, or select the most comprehensive one available.
 
 ```{r}
 pokemon_rec_less <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
@@ -334,7 +334,7 @@ collect_metrics(pokemon_fitV_less) |>
   kable(digits = 3)
 ```
 
-We notice that the RMSE value from cross validation of the second model is less than the RMSE value from the cross validation of the first full model, while the $R^2$ values from both models have negligible difference, meaning the second model is a better predictor a pokémon's base stat total. From the results of these tests, **we can confidently select model number 2, the reduced model**.
+We notice that the RMSE value from cross validation of the second model is less than the RMSE value from the cross validation of the first full model, while the $R^2$ values from both models have negligible difference, meaning the second model is a better predictor a Pokémon's base stat total. From the results of these tests, **we can confidently select model number 2, the reduced model**.
 
 To determine there is no multicollinearity in our model, we must examine the VIF values:
 
@@ -346,7 +346,7 @@ vif(pokemon_fitless$fit) |>
   kable(digits = 3)
 ```
 
-A VIF value \> 10 for a variable indicates concerning collinearity. We notice that pokedex_number and generation have VIF values \> 40, meaning pokedex_number and generation appear to be collinear. This makes sense -- as generations of pokemon are intervals of pokedex numbers. Generation divides all values 1-800 of pokedex_number into different intervals (for example, generation 1 is pokedex numbers 1-151). To fix this, we deleted generation, since it is far more discrete than pokedex_number.
+A VIF value \> 10 for a variable indicates concerning collinearity. We notice that pokedex_number and generation have VIF values \> 40, meaning pokedex_number and generation appear to be collinear. This makes sense -- as generations of Pokémon are intervals of Pokédex numbers. Generation divides all values 1-800 of pokedex_number into different intervals (for example, generation 1 is Pokédex numbers 1-151). To fix this, we deleted generation, since it is far more discrete than pokedex_number.
 
 Our final model is the same as the second model with generation removed.
 
@@ -415,7 +415,7 @@ The equation for the final model is: $$
 \begin{split} base\_total = 419.982 - 0.839 * capture\_rate + 2.412* experience\_growth \\  + 28.62 * height\_m + 0.024 * pokedex\_number + 88.596 * is\_legendary1 \end{split}
 $$
 
-We can tell that we expect the base total to be 419.982 for a pokémon that is not legendary, with capture_rate, experience_growth, height_m, pokedex_number at their mean values.
+We can tell that we expect the base total to be 419.982 for a Pokémon that is not legendary, with capture_rate, experience_growth, height_m, pokedex_number at their mean values.
 
 For every one unit increase in capture rate, we expect base total to decrease by .839, on average, holding all other predictor variables constant.
 
@@ -423,11 +423,11 @@ For every one unit increase in experience growth, we expect base total to increa
 
 For every one meter increase in height, we expect base total to increase by 28.62, on average, holding all other predictor variables constant.
 
-For every one increase in pokedex number, we expect base total to increase by .024, on average, holding all other predictor variables constant.
+For every one increase in Pokédex number, we expect base total to increase by .024, on average, holding all other predictor variables constant.
 
-We expect a legendary pokemon to have a base total greater than a non legendary pokemon by 88.596, on average, holding all other predictor variables constant.
+We expect a legendary Pokémon to have a base total greater than a non legendary Pokémon by 88.596, on average, holding all other predictor variables constant.
 
-One interesting observation from our analysis is that the visible qualities, such as height and legendary status, have the most impact on a Pokémon's base total, as indicated by their relatively large coefficients in the regression model. For players, these insights are valuable as they can make assessments of a pokemon's strength based on physical characteristics.
+One interesting observation from our analysis is that the visible qualities, such as height and legendary status, have the most impact on a Pokémon's base total, as indicated by their relatively large coefficients in the regression model. For players, these insights are valuable as they can make assessments of a Pokémon's strength based on physical characteristics.
 
 ## Results:
 
@@ -602,16 +602,16 @@ knitr::kable(
   digits = 3)
 ```
 
-When we compare the $R^2$ values, that of the training model was .641 while the testing model had a $R^2$ value of .577. This is to be expected since the training data has been trained on so it should be a better predictor than the testing model. When we compare the RMSE for the training and testing data, we can see that the RMSE for the training set was 71.1 while the RMSE of the testing set was 80.69. Since lower RMSE values indicate a better fit to the model and we can see that the RMSE of the testing set was greater than that of the training set which means the training data once again is a better predictor and this is once again to be expected since training data was trained on so it should predict the model better. Since the difference in the $R^2$ and the RMSE values between the training and the testing data wasn't too significant, this shows that our model doesn't over fit the data.
+When we compare the $R^2$ values, that of the training model was .641 while the testing model had a $R^2$ value of .577. This is to be expected since the model will perform better on data that it has been trained on than data it has not seen. When we compare the RMSE for the training and testing data, we can see that the RMSE for the training set was 71.1 while the RMSE of the testing set was 80.69. Since lower RMSE values indicate a better fit to the model, we can see that the model once again performed slightly better on the training data than the testing data, which is to be expected. However, since the difference in the $R^2$ and the RMSE values between the training and the testing data wasn't too significant, this shows that our model doesn't overfit the data.
 
-Overall, for our initial interpretations of our final model, we find it to be a relatively strong predictor for base_total of a Pokemon given the relatively low RMSE value and the relatively high $R^2$ value. Thus, we have confirmed our hypothesis that in fact, we *can* predict the base_total of a Pokemon with decent accuracy by using different variables.
+Overall, for our initial interpretations of our final model, we find it to be a relatively strong predictor for base_total of a Pokemon given the relatively low RMSE value and the relatively high $R^2$ value. Thus, we have confirmed our hypothesis that in fact, we *can* predict the base_total of a Pokémon with decent accuracy by using different variables.
 
 ## Discussion + Conclusion:
 
-**Summary of Findings:** From the equation of our final model we found out that in order to maximize the base total of a pokémon, we want that pokémon to have a low capture rate, high experience growth, to be tall, large pokedex number, and want our pokémon to be of the legendary kind. Our research aimed to predict a Pokémon's base stat total. Our analysis revealed statistically significant and statistically insignificant relationships between certain characteristics such as Pokémon's capture rate, whether it is legendary, and generation with the pokémon's overall strength (base total). Our final model which included capture rate, experience growth, height, pokedex number, and legendary status, was not only a good predictor of base_total, accounting for approximately 64.074% of the variability in Base Stat Total in the training data, but also was a concise model, only including statistically significant predictors. The relatively low RMSE value of 72.81 also suggested a satisfactory level of prediction accuracy, as base total ranges from 200 to 800.
+**Summary of Findings:** From the equation of our final model we found out that in order to maximize the base total of a Pokémon, we want that Pokémon to have a low capture rate, high experience growth, to be tall, large pokedex number, and want our Pokémon to be of the legendary kind. Our research aimed to predict a Pokémon's base stat total. Our analysis revealed statistically significant and statistically insignificant relationships between certain characteristics such as Pokémon's capture rate, whether it is legendary, and generation with the Pokémon's overall strength (base total). Our final model which included capture rate, experience growth, height, Pokédex number, and legendary status, was not only a good predictor of base_total, accounting for approximately 64.074% of the variability in Base Stat Total in the training data, but also was a concise model, only including statistically significant predictors. The relatively low RMSE value of 72.81 also suggested a satisfactory level of prediction accuracy, as base total ranges from 200 to 800.
 
-**Limitations and Improvement Suggestions:** The dataset was drawn in 2017 does not include pokémon in games released after this date. This means that this model should not be extrapolated past this date as the Pokemon games evolve over time and might affect our applicability of these results to future editions. Additionally, as we talked more in detail about in the previous section, the independence condition being violated limits the predictive power of this model, as evolution chains are not including in our model. While we removed variables like base_egg_steps and base_happiness due to their high p-values, further exploration could determine if any interaction effects or non-linear relationships exist that we might have overlooked.
+**Limitations and Improvement Suggestions:** The dataset was drawn in 2017 does not include Pokémon in games released after this date. This means that this model should not be extrapolated past this date as the Pokémon games evolve over time and might affect our applicability of these results to future editions. Additionally, as we talked more in detail about in the previous section, the independence condition being violated limits the predictive power of this model, as evolution chains are not including in our model. While we removed variables like base_egg_steps and base_happiness due to their high p-values, further exploration could determine if any interaction effects or non-linear relationships exist that we might have overlooked.
 
-**Reliability and Validity Concerns:** The linear regression model assumes linearity, independence, homoscedasticity, and normality of residuals, which we proved held except for the independence in our dataset. Even though our model satisfied all but the independence conditions, we have explained above that moving forward with this in mind is the better decision as removing non independent pokemon would limit the scope of our conclusions and our goal of the study was to predict the base total across all pokemon in all evolutionary stages, not just one pokemon from each evolutionary line. Any other violation in future datasets of future Pokemon games could make the model unreliable. Additionally, the data was scraped from a fan-run website, there might be biases or errors in how the information was recorded, affecting the validity.
+**Reliability and Validity Concerns:** The linear regression model assumes linearity, independence, homoscedasticity, and normality of residuals, which we proved held except for the independence in our dataset. Even though our model satisfied all but the independence conditions, we have explained above that moving forward with this in mind is the better decision as removing non independent Pokémon would limit the scope of our conclusions and our goal of the study was to predict the base total across all Pokémon in all evolutionary stages, not just one Pokémon from each evolutionary line. Any other violation in future datasets of future Pokémon games could make the model unreliable. Additionally, the data was scraped from a fan-run website, there might be biases or errors in how the information was recorded, affecting the validity.
 
-**Future Work:** To continue our research in the future, we could could include data from newer Pokémon games to keep our model relevant over time. Additionally, analyzing how a Pokémon's evolutionary stage affects its Base Stat Total could be very interesting, especially due to the great variance in Pokemon evolution. For examples, the starter pokémon are generally pretty strong compared to other pokémon their level at all stages in their evolution. On the other hand, Magikarp is possibly the weakest pokémon in the game, but evolves to become Gyarados, one of the strongest pokémon in the game. Additionally, we could have more investigation into the interactive effects between variables, like how the combination of type and legendary status impacts base stats, could provide a deeper understanding of the underlying dynamics.
+**Future Work:** To continue our research in the future, we could could include data from newer Pokémon games to keep our model relevant over time. Additionally, analyzing how a Pokémon's evolutionary stage affects its Base Stat Total could be very interesting, especially due to the great variance in Pokémon evolution. For examples, the starter Pokémon are generally pretty strong compared to other Pokémon their level at all stages in their evolution. On the other hand, Magikarp is possibly the weakest Pokémon in the game, but evolves to become Gyarados, one of the strongest Pokémon in the game. Additionally, we could have more investigation into the interactive effects between variables, like how the combination of type and legendary status impacts base stats, which could provide a deeper understanding of the underlying dynamics.
