@@ -157,7 +157,7 @@ tidy(summary(pokemon$base_total)) |>
 
 **p1: Distribution of Base total:** We can see from the distribution of the base total, that is seems to be roughly trimodal with three peaks (one around 300, 400, and 475). The base total points vary from about 180 to 780 with a mean at around 428.4. The median is 435 which is higher than the mean by a little bit which could mean that there are more extreme low base total Pokemon bringing the mean down a little bit. The IQR is 185 (505 - 320) and looking at the data there is an outlier around 780 base total.
 
-**p2: Mean Base Total Across Generations:** This is the graph showing the relationship between different generation Pokemon and their mean base total. We can see from this graph that the mean base total of generation 4 Pokemon were the highest but overall we can't see any distinct relationships between the generation of the Pokemon and their mean base total. One can maybe say there could be a very slight positive linear relationship between the generation of the Pokemon and their mean base total as we observe that as generation increases the mean base total tends to increase slightly.
+**p2: Mean Base Total Across Generations:** This is the graph showing the relationship between different generation Pokemon and their mean base total. We can see from this graph that the mean base total of generation 4 Pokemon were the highest but overall. There could potentially be a very slight positive linear relationship between the generation of the Pokemon and their mean base total as we observe that as generation increases the mean base total tends to increase slightly.
 
 **p3: Scatter Plot of Base Total vs Weight:** From the scatter plot I can see that there is no apparent correlation between the weight and the base total. There may be a very low positive correlation between these two variables but most of the points are focused around when the weight of the Pokemon is less than 100kg so it's hard to tell the relationship. There seems to be a few outliers near 900-1000kg.
 
@@ -226,6 +226,8 @@ Next, we take the training data through a recipe to ready it for our analysis.
 6.  Finally, we remove percentage_male from consideration.
 
     -   Several Pokemon do not have a gender, leading to many missing values in the dataset. Upon further examination, we found that a disproportionate 63/70 of the legendary Pokemon in the dataset to not have a gender, due to the distinct and rare nature of the legendary status in the game, whereas most non-legendary pokémon do have a gender Thus, percentage_male and is_legendary cannot be effective predictors in conjunction, so we decide to remove percentage_male from our model.
+
+Note that pokédex number is in fact a unique identifier for a pokémon, yet it also contains information on when the pokémon was released in-game, as larger pokédex numbers correspond to later releases, which may have a tie to base_total. Also, generation may seem as if it is an arbitrary label, but it also corresponds to when a pokémon was released in a different manner than pokédex number. We are wary of the potential of collinearity among these variables and will analyze the substantiallity of their collinearity (as well as all other potential predictors) in our analysis.
 
 ```{r}
 pokemon_spec_full <- linear_reg() |>
@@ -353,7 +355,7 @@ vif(pokemon_fitless$fit) |>
   kable(digits = 3)
 ```
 
-A VIF value greater than 10 for a variable indicates concerning collinearity. We notice that pokedex_number and generation both have VIF values \> 40, while all other variables have very low VIF values, meaning pokedex_number and generation appear to depend heavily on each other. This makes perfect sense -- as generations of pokemon are simply intervals of pokedex numbers, or in other words, generation divides all values 1-800 of pokedex_number into different intervals (for example, generation 1 is pokedex numbers 1-151). Thus, we should remove 1 of the 2 variables before continuing with our final model. We choose to delete generation, since it is simply a far more discrete form of pokedex_number.
+A VIF value greater than 10 for a variable indicates concerning collinearity. We notice that pokedex_number and generation both have VIF values \> 40, while all other variables have very low VIF values, meaning pokedex_number and generation appear to depend heavily on each other. This makes perfect sense -- as generations of pokemon are simply intervals of pokedex numbers, or in other words, generation divides all values 1-800 of pokedex_number into different intervals (for example, generation 1 is pokedex numbers 1-151). Thus, we should remove 1 of the 2 variables before continuing with our final model. We choose to delete generation, since it is far more discrete than pokedex_number.
 
 Our final model is the same as the second model with generation removed.
 
