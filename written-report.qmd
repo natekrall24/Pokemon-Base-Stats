@@ -334,7 +334,7 @@ collect_metrics(pokemon_fitV_less) |>
   kable(digits = 3)
 ```
 
-We notice that the RMSE value from cross validation of the second model \< the RMSE value from the cross validation of the first full model, while the $R^2$ values from both models have negligible difference, meaning the second model is a better predictor a pokémon's base stat total. From the results of these tests, **we can confidently select model number 2, the reduced model**.
+We notice that the RMSE value from cross validation of the second model is less than the RMSE value from the cross validation of the first full model, while the $R^2$ values from both models have negligible difference, meaning the second model is a better predictor a pokémon's base stat total. From the results of these tests, **we can confidently select model number 2, the reduced model**.
 
 To determine there is no multicollinearity in our model, we must examine the VIF values:
 
@@ -465,7 +465,7 @@ norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
   labs(title = "Distribution of residuals") +
   theme(plot.title = element_text(size = 11))
 pred_resid <- ggplot(data = pokemon_aug, aes(x = .fitted, y = .resid)) +
-  labs(title = "Resid. v Fitted") +
+  labs(title = "Residual vs Fitted") +
   geom_point()
 ```
 
@@ -552,7 +552,7 @@ norm <- norm + theme(
 
 **Constant Variance** - The vertical spread of the residuals is constant across the plots of residuals versus fitted values, therefore this condition is satisfied.
 
-**Normality** - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \>\> 30 so we can relax this condition.
+**Normality** - The distribution of the residuals is approximately unimodal and symmetric, so the normality condition is satisfied. The sample size is sufficiently large \> 30 so we can relax this condition.
 
 **Independence** - The independence condition is **not** satisfied. The independence condition in our Pokémon dataset is not met due to the evolutionary relationships between Pokémon. For instance, Pokémon like Bulbasaur, Ivysaur, and Venusaur share evolutionary lines, leading to non-independent data, as these related Pokémon often have similar types, generations, and correlated base stats. Acknowledging this, our model might be less predictive for independent Pokémon, assuming independent errors, which is not the case here.
 
@@ -612,6 +612,6 @@ Overall, for our initial interpretations of our final model, we find it to be a 
 
 **Limitations and Improvement Suggestions:** The dataset was drawn in 2017 does not include pokémon in games released after this date. This means that this model should not be extrapolated past this date as the Pokemon games evolve over time and might affect our applicability of these results to future editions. Additionally, as we talked more in detail about in the previous section, the independence condition being violated limits the predictive power of this model, as evolution chains are not including in our model. While we removed variables like base_egg_steps and base_happiness due to their high p-values, further exploration could determine if any interaction effects or non-linear relationships exist that we might have overlooked.
 
-**Reliability and Validity Concerns:** The linear regression model assumes linearity, independence, homoscedasticity, and normality of residuals, which we proved held for our dataset. Even though our model satisfied these conditions, any violation in future datasets of future Pokemon games could make the model unreliable. Additionally, the data was scraped from a fan-run website, there might be biases or errors in how the information was recorded, affecting the validity.
+**Reliability and Validity Concerns:** The linear regression model assumes linearity, independence, homoscedasticity, and normality of residuals, which we proved held except for the independence in our dataset. Even though our model satisfied all but the independence conditions, we have explained above that moving forward with this in mind is the better decision as removing non independent pokemon would limit the scope of our conclusions and our goal of the study was to predict the base total across all pokemon in all evolutionary stages, not just one pokemon from each evolutionary line. Any other violation in future datasets of future Pokemon games could make the model unreliable. Additionally, the data was scraped from a fan-run website, there might be biases or errors in how the information was recorded, affecting the validity.
 
 **Future Work:** To continue our research in the future, we could could include data from newer Pokémon games to keep our model relevant over time. Additionally, analyzing how a Pokémon's evolutionary stage affects its Base Stat Total could be very interesting, especially due to the great variance in Pokemon evolution. For examples, the starter pokémon are generally pretty strong compared to other pokémon their level at all stages in their evolution. On the other hand, Magikarp is possibly the weakest pokémon in the game, but evolves to become Gyarados, one of the strongest pokémon in the game. Additionally, we could have more investigation into the interactive effects between variables, like how the combination of type and legendary status impacts base stats, could provide a deeper understanding of the underlying dynamics.
