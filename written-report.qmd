@@ -298,15 +298,12 @@ We then conducted two tests to decipher which model is best to select for our fi
 glance(pokemon_fit_full) |> 
   select(AIC, BIC, adj.r.squared) |>
   kable(digits = 3)
-```
-
-From this test, we note that both AIC and BIC are lower for the second, reduced model than the first model. The adjusted $R^2$ values are very similar in size. With this information, it would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted $R^2$ value. However, we run one more test, v-fold cross validation, to compare the models once again to have another point of evidence. The results of this second test are below:
-
-```{r}
 glance(pokemon_fit_less) |> 
   select(AIC, BIC, adj.r.squared) |>
   kable(digits = 3)
 ```
+
+From this test, we note that both AIC and BIC are lower for the second, reduced model than the first model. The adjusted $R^2$ values are very similar in size. With this information, it would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted $R^2$ value. However, we run one more test, v-fold cross validation, to compare the models once again to have another point of evidence. The results of this second test are below:
 
 Cross validation results for the 1st, full model:
 
@@ -420,9 +417,13 @@ $$
 
 We can tell that we expect the base total to be 419.982 for a pokémon that is not legendary, with capture_rate, experience_growth, height_m, pokedex_number at their mean values.
 
-For every one unit increase in capture rate, we expect base total to decrease by .839, on average, holding all other predictor variables constant. For every one unit increase in experience growth, we expect base total to increase by 2.412, on average, holding all other predictor variables constant.
+For every one unit increase in capture rate, we expect base total to decrease by .839, on average, holding all other predictor variables constant.
 
-For every one meter increase in height, we expect base total to increase by 28.62, on average, holding all other predictor variables constant. For every one increase in pokedex number, we expect base total to increase by .024, on average, holding all other predictor variables constant.
+For every one unit increase in experience growth, we expect base total to increase by 2.412, on average, holding all other predictor variables constant.
+
+For every one meter increase in height, we expect base total to increase by 28.62, on average, holding all other predictor variables constant.
+
+For every one increase in pokedex number, we expect base total to increase by .024, on average, holding all other predictor variables constant.
 
 We expect a legendary pokemon to have a base total greater than a non legendary pokemon by 88.596, on average, holding all other predictor variables constant.
 
@@ -466,13 +467,86 @@ norm <- ggplot(data = pokemon_aug, aes(x = .resid)) +
 pred_resid <- ggplot(data = pokemon_aug, aes(x = .fitted, y = .resid)) +
   labs(title = "Resid. v Fitted") +
   geom_point()
-  
+```
+
+```{r}
+p1 <- p1 + theme(
+  plot.title = element_text(size = rel(0.8)), # Adjust plot title size
+  axis.title.x = element_text(size = rel(0.8)),     # X axis label
+  axis.title.y = element_text(size = rel(0.8)),     # Y axis label
+  axis.text.x = element_text(size = rel(0.8)),      # X axis text
+  axis.text.y = element_text(size = rel(0.8)),      # Y axis text
+  legend.title = element_text(size = rel(0.8)),     # Legend title
+  legend.text = element_text(size = rel(0.8))       # Legend text
+)
+
+p2 <- p2 + theme(
+  plot.title = element_text(size = rel(0.8)), # Adjust plot title size
+  axis.title.x = element_text(size = rel(0.8)),     # X axis label
+  axis.title.y = element_text(size = rel(0.8)),     # Y axis label
+  axis.text.x = element_text(size = rel(0.8)),      # X axis text
+  axis.text.y = element_text(size = rel(0.8)),      # Y axis text
+  legend.title = element_text(size = rel(0.8)),     # Legend title
+  legend.text = element_text(size = rel(0.8))       # Legend text
+)
+
+p3 <- p3 + theme(
+  plot.title = element_text(size = rel(0.8)), # Adjust plot title size
+  axis.title.x = element_text(size = rel(0.8)),     # X axis label
+  axis.title.y = element_text(size = rel(0.8)),     # Y axis label
+  axis.text.x = element_text(size = rel(0.8)),      # X axis text
+  axis.text.y = element_text(size = rel(0.8)),      # Y axis text
+  legend.title = element_text(size = rel(0.8)),     # Legend title
+  legend.text = element_text(size = rel(0.8))       # Legend text
+)
+
+p4 <- p4 + theme(
+  plot.title = element_text(size = rel(0.8)), # Adjust plot title size
+  axis.title.x = element_text(size = rel(0.8)),     # X axis label
+  axis.title.y = element_text(size = rel(0.8)),     # Y axis label
+  axis.text.x = element_text(size = rel(0.8)),      # X axis text
+  axis.text.y = element_text(size = rel(0.8)),      # Y axis text
+  legend.title = element_text(size = rel(0.8)),     # Legend title
+  legend.text = element_text(size = rel(0.8))       # Legend text
+)
+
+p5 <- p5 + theme(
+  plot.title = element_text(size = rel(0.8)), # Adjust plot title size
+  axis.title.x = element_text(size = rel(0.8)),     # X axis label
+  axis.title.y = element_text(size = rel(0.8)),     # Y axis label
+  axis.text.x = element_text(size = rel(0.8)),      # X axis text
+  axis.text.y = element_text(size = rel(0.8)),      # Y axis text
+  legend.title = element_text(size = rel(0.8)),     # Legend title
+  legend.text = element_text(size = rel(0.8))       # Legend text
+)
+
+pred_resid <- pred_resid + theme(
+  plot.title = element_text(size = rel(0.8)), # Adjust plot title size
+  axis.title.x = element_text(size = rel(0.8)),     # X axis label
+  axis.title.y = element_text(size = rel(0.8)),     # Y axis label
+  axis.text.x = element_text(size = rel(0.8)),      # X axis text
+  axis.text.y = element_text(size = rel(0.8)),      # Y axis text
+  legend.title = element_text(size = rel(0.8)),     # Legend title
+  legend.text = element_text(size = rel(0.8))       # Legend text
+)
+
+norm <- norm + theme(
+  plot.title = element_text(size = rel(0.8)), # Adjust plot title size
+  axis.title.x = element_text(size = rel(0.8)),     # X axis label
+  axis.title.y = element_text(size = rel(0.8)),     # Y axis label
+  axis.text.x = element_text(size = rel(0.8)),      # X axis text
+  axis.text.y = element_text(size = rel(0.8)),      # Y axis text
+  legend.title = element_text(size = rel(0.8)),     # Legend title
+  legend.text = element_text(size = rel(0.8))       # Legend text
+)
+
+
+
 (p1 + p2) /
 (p3 | p4)
 
 (p5 | pred_resid) /
 (norm)
-
 ```
 
 **Linearity condition** - This condition is satisfied as there is no clear patterns in the residuals vs predictor variables such as a fanning pattern and the fitted vs residuals graph also seems to have no fanning pattern.
