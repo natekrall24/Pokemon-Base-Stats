@@ -17,13 +17,5 @@ would seem to have certain values for these predictor variables when compared to
 for example, legendary pokémon tend to be stronger in battle than non legendary pokémon,
 so we might expect is_legendary to be a useful predictor for base_total. We retrieved the
 dataset from kaggle.com, a large data science online community, and the dataset is called “The
-Complete Pokemon Dataset” created by Rounak Banik in 2017. The dataset was retrieved
-via web scraper from the website serebii.net. Since it was formed in 2017, the dataset does
-not include pokémon from more recent games, but still includes 801 pokémon, meaning the
-dataset has 801 observations. However, note that we removed one pokémon from the original
-801 pokémon, Minior, from the dataset, since it has 2 different forms and has an uninterpretable capture rate. We noticed that while reading the .csv file, R automatically translated
-the *capture_rate* variable to characters because Minior’s capture rate was listed as: “30
-(Meteorite)255 (Core)”. We decided to exclude this observation from the model because of its
-uninterpretable characteristics, and after, we casted *capture_rate* an integer instead of a
-character. The dataset contains 23 variables, explanations of which can be viewed in our data
-dictionary.
+Complete Pokemon Dataset” created by Rounak Banik in 2017, including 801 pokemon from games made before 2017. The dataset was retrieved
+via web scraper from the website serebii.net.
