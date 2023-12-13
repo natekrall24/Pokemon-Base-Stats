@@ -240,7 +240,7 @@ tidy(pokemon_fit_full) |>
   kable(digits = 3)
 ```
 
-Base_egg_steps, base_happiness, and weight_kg are three candidates for variables to remove from the model, since we notice their p-values are all greater than 0.05, meaning they are potentially statistically insignificant predictors. Thus, the next step in our method is compare two models through a series of tests: the one model being our original model with all predictors after running our feature engineering, and one with base_egg_steps, base_happiness, and weight_kg removed to select a model that is either concise with enough comprehensiveness or as comprehensive as we can make it.
+Base_egg_steps, base_happiness, and weight_kg are three candidates for variables to remove from the model, since we notice their p-values are all \> .05, meaning they are potentially statistically insignificant predictors. The next step in our method is compare two models through a series of tests: the one model being our original model with all predictors after running our feature engineering, and one with those varibale removed to select a model that strikes a balance between conciseness and detail, or select the most comprehensive one available.
 
 ```{r}
 pokemon_rec_less <- recipe(base_total ~ ., data = pokemon_train) |> #make name's role ID 
@@ -303,7 +303,7 @@ glance(pokemon_fit_less) |>
   kable(digits = 3)
 ```
 
-From this test, we note that both AIC and BIC are lower for the second, reduced model than the first model. The adjusted $R^2$ values are very similar in size. With this information, it would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted $R^2$ value. However, we run one more test, v-fold cross validation, to compare the models once again to have another point of evidence. The results of this second test are below:
+From this test, we note that both AIC and BIC are lower for the second, reduced model. The adjusted $R^2$ values are very similar in size. It would be logical to select the second model, as it produces more preferable values of AIC and BIC while maintaining a very similar adjusted $R^2$ value. However, we run one more test, v-fold cross validation, to compare the models once again. The results of this second test are below:
 
 Cross validation results for the 1st, full model:
 
@@ -334,9 +334,9 @@ collect_metrics(pokemon_fitV_less) |>
   kable(digits = 3)
 ```
 
-We notice that the RMSE value from the cross validation of the second model is lower than the RMSE value from the cross validation of the first full model, while the $R^2$ values from both models have negligible difference, leading us to believe that the second model performs better in terms of predicting a pokémon's base stat total. From the results of these two tests, **we can confidently select model number 2, the reduced model**.
+We notice that the RMSE value from cross validation of the second model \< the RMSE value from the cross validation of the first full model, while the $R^2$ values from both models have negligible difference, meaning the second model is a better predictor a pokémon's base stat total. From the results of these tests, **we can confidently select model number 2, the reduced model**.
 
-To determine there is no multicollinearity present in our model, we must examine the VIF values:
+To determine there is no multicollinearity in our model, we must examine the VIF values:
 
 ```{r}
 #getting VIF numbers. Only worry about multicolinearity if VIFS are greater than 10
@@ -346,7 +346,7 @@ vif(pokemon_fitless$fit) |>
   kable(digits = 3)
 ```
 
-A VIF value greater than 10 for a variable indicates concerning collinearity. We notice that pokedex_number and generation both have VIF values \> 40, meaning pokedex_number and generation appear to depend heavily on each other. This makes perfect sense -- as generations of pokemon are simply intervals of pokedex numbers, or in other words, generation divides all values 1-800 of pokedex_number into different intervals (for example, generation 1 is pokedex numbers 1-151). Thus, we should remove 1 of the 2 variables before continuing with our final model. We choose to delete generation, since it is far more discrete than pokedex_number.
+A VIF value \> 10 for a variable indicates concerning collinearity. We notice that pokedex_number and generation have VIF values \> 40, meaning pokedex_number and generation appear to be collinear. This makes sense -- as generations of pokemon are intervals of pokedex numbers. Generation divides all values 1-800 of pokedex_number into different intervals (for example, generation 1 is pokedex numbers 1-151). To fix this, we deleted generation, since it is far more discrete than pokedex_number.
 
 Our final model is the same as the second model with generation removed.
 
@@ -427,7 +427,7 @@ For every one increase in pokedex number, we expect base total to increase by .0
 
 We expect a legendary pokemon to have a base total greater than a non legendary pokemon by 88.596, on average, holding all other predictor variables constant.
 
-One interesting observation from our analysis is that the visible qualities, such as height and legendary status, have the most impact on a Pokémon's base total, as indicated by their relatively large coefficients in the regression model. For players, these insights are valuable as they can make assessments of a pokemons strength based on physical characteristics.
+One interesting observation from our analysis is that the visible qualities, such as height and legendary status, have the most impact on a Pokémon's base total, as indicated by their relatively large coefficients in the regression model. For players, these insights are valuable as they can make assessments of a pokemon's strength based on physical characteristics.
 
 ## Results:
 
@@ -540,13 +540,12 @@ norm <- norm + theme(
   legend.text = element_text(size = rel(0.8))       # Legend text
 )
 
-
-
-(p1 + p2) /
-(p3 | p4)
-
-(p5 | pred_resid) /
+(p5 + pred_resid) /
 (norm)
+
+(p1 + p3) / 
+(p2 + p4)
+
 ```
 
 **Linearity condition** - This condition is satisfied as there is no clear patterns in the residuals vs predictor variables such as a fanning pattern and the fitted vs residuals graph also seems to have no fanning pattern.
