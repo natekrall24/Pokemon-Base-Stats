@@ -1,9 +1,7 @@
 # Predicting a Pokémon’s Strength Using Variables Other Than Base Stats - A Multiple Linear Regression Project 
 Authors:
-Nate Krall
-
-Daniel Cohen
-
+Nate Krall <br>
+Daniel Cohen <br>
 Brian Kim
 
 ## Summary
