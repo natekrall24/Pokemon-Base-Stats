@@ -1,5 +1,8 @@
-# Predicting a Pokémon’s Strength Using Variables Other Than Base Stats
-by STA 210 BDN: Nate Krall, Daniel Cohen, Brian Kim
+# Predicting a Pokémon’s Strength Using Variables Other Than Base Stats - A Multiple Linear Regression Problem 
+Authors:
+Nate Krall
+Daniel Cohen
+Brian Kim
 
 ## Summary
 A deeper look into the numbers in the game of Pokemon shows a game filled relationships
